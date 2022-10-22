@@ -96,7 +96,7 @@ loops = 360
 r = 0.25
 o = np.zeros((loops,1))
 a = np.zeros((loops,1))
-lines = np.zeros((2 * loops,9))
+lines = np.zeros((2 * loops,9)) ##double check this
 for q in np.arange(1,loops+1,1).reshape(-1):
     angle = q * (360 / loops)
     #if (angle >10 && 170 > angle) || (angle > 190 && angle < 350) #
@@ -110,15 +110,15 @@ for q in np.arange(1,loops+1,1).reshape(-1):
     lines[2 * q - 1,1] = u(2) - ul
     lines[2 * q,1] = u(1) + ul
     #adds the y coord to the matrix(checking if the fracture is angled
-#up or down and producess a line on the image appropriatly
+#up or down and produces a line on the image appropriately
     if (v(1) < v(2)):
-        line(np.array([x(2),u(2) - ul]),np.array([y(2),v(2) - vl]),'color','b','linewidth',1)
-        line(np.array([x(5),u(1) + ul]),np.array([y(5),v(1) + vl]),'color','b','linewidth',1)
+        plt.plot(np.array([x(2),u(2) - ul]),np.array([y(2),v(2) - vl]),'color','b','linewidth',1)
+        plt.plot(np.array([x(5),u(1) + ul]),np.array([y(5),v(1) + vl]),'color','b','linewidth',1)
         lines[2 * q - 1,2] = v(2) - vl
         lines[2 * q,2] = v(1) + vl
     else:
-        line(np.array([x(2),u(2) - ul]),np.array([y(2),v(2) + vl]),'color','b','linewidth',1)
-        line(np.array([x(5),u(1) + ul]),np.array([y(5),v(1) - vl]),'color','b','linewidth',1)
+        plt.plot(np.array([x(2),u(2) - ul]),np.array([y(2),v(2) + vl]),'color','b','linewidth',1)
+        plt.plot(np.array([x(5),u(1) + ul]),np.array([y(5),v(1) - vl]),'color','b','linewidth',1)
         lines[2 * q - 1,2] = v(2) + vl
         lines[2 * q,2] = v(1) - vl
     #repeats the above for the second image
