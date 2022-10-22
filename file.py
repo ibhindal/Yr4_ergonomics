@@ -6,6 +6,11 @@ import pylab as plt
 #os.system('cls')
 wristwidth = 60
 
+def mouse_event(event):
+    print('x: {} and y: {}'.format(event.xdata, event.ydata))
+
+
+
 #reads the image
 I1 = plt.imread("C:\\Users\\Ibrahim\\Desktop\\top.png")
 I2 = plt.imread("C:\\Users\\Ibrahim\\Desktop\\side.png")
