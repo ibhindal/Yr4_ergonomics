@@ -13,7 +13,7 @@ I2 = plt.imread("C:\\Users\\Ibrahim\\Desktop\\side.png")
 #I2 = rgb2gray(I2)
 
 # Grid lines at these intervals (in pixels)
-# dx and dy can be different but same is used here
+# dx and dy can be different but same is used below
 dx, dy = 100,100
 
 # Custom (rgb) grid color
