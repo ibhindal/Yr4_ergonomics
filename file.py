@@ -226,7 +226,7 @@ omega = np.arctan(dx / dy)
 #H1 = sqrt(dx^2 + dy^2);
 O2 = 3 * H1 * np.sin(omega)
 A2 = 3 * H1 * np.cos(omega)
-line(np.array([x(4),lines(co - 1,3) + O2]),np.array([y(4),lines(co - 1,4) + A2]),'color','g','linewidth',2)
+plt.plot(np.array([x(4),lines(co - 1,3) + O2]),np.array([y(4),lines(co - 1,4) + A2]),'color','g','linewidth',2)
 dx = np.abs(x(2) - lines(co - 1,1))
 dy = np.abs(y(2) - lines(co - 1,2))
 omega = np.arctan(dx / dy)
