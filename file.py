@@ -127,8 +127,8 @@ for q in np.arange(1,loops+1,1).reshape(-1):
     lines[2 * q - 1,3] = u(4) - ul
     lines[2 * q,3] = u(3) - ul
     if (v(3) < v(4)):
-        line(np.array([x(4),u(4) - ul]),np.array([y(4),v(4) - vl]),'color','b','linewidth',1)
-        line(np.array([x(6),u(3) + ul]),np.array([y(6),v(3) + vl]),'color','b','linewidth',1)
+        plt.plot(np.array([x(4),u(4) - ul]),np.array([y(4),v(4) - vl]),'color','b','linewidth',1)
+        plt.plot(np.array([x(6),u(3) + ul]),np.array([y(6),v(3) + vl]),'color','b','linewidth',1)
         lines[2 * q - 1,4] = v(4) - vl
         lines[2 * q,4] = v(3) + vl
     else:
