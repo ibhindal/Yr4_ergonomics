@@ -75,8 +75,8 @@ for i in np.arange(1,6+1).reshape(-1):
 plt.imshow(I)
 #identifies fracture location and labels
 u,v = ginput(4)
-line(u(np.arange(1,2+1)),v(np.arange(1,2+1)),'color','red','linestyle','--','linewidth',2)
-line(u(np.arange(3,4+1)),v(np.arange(3,4+1)),'color','red','linestyle','--','linewidth',2)
+plt.plot(u(np.arange(1,2+1)),v(np.arange(1,2+1)),'color','red','linestyle','--','linewidth',2)
+plt.plot(u(np.arange(3,4+1)),v(np.arange(3,4+1)),'color','red','linestyle','--','linewidth',2)
 #determines the length of each line and their angle to the normal
 ul1 = np.abs(u(1) - u(2))
 vl1 = np.abs(v(1) - v(2))
@@ -132,8 +132,8 @@ for q in np.arange(1,loops+1,1).reshape(-1):
         lines[2 * q - 1,4] = v(4) - vl
         lines[2 * q,4] = v(3) + vl
     else:
-        line(np.array([x(4),u(4) - ul]),np.array([y(4),v(4) + vl]),'color','b','linewidth',1)
-        line(np.array([x(6),u(3) + ul]),np.array([y(6),v(3) - vl]),'color','b','linewidth',1)
+        plt.plot(np.array([x(4),u(4) - ul]),np.array([y(4),v(4) + vl]),'color','b','linewidth',1)
+        plt.plot(np.array([x(6),u(3) + ul]),np.array([y(6),v(3) - vl]),'color','b','linewidth',1)
         lines[2 * q - 1,4] = v(4) + vl
         lines[2 * q,4] = v(3) - vl
     #creates vecotrs for each line. 2D and 3D
@@ -233,18 +233,18 @@ omega = np.arctan(dx / dy)
 #H1 = sqrt(dx^2 + dy^2);
 O2 = 3 * H1 * np.sin(omega)
 A2 = 3 * H1 * np.cos(omega)
-line(np.array([x(2),lines(co - 1,1) - O2]),np.array([y(2),lines(co - 1,2) + A2]),'color','g','linewidth',2)
+plt.plot(np.array([x(2),lines(co - 1,1) - O2]),np.array([y(2),lines(co - 1,2) + A2]),'color','g','linewidth',2)
 dx = np.abs(x(5) - lines(co - 1,1))
 dy = np.abs(y(5) - lines(co - 1,2))
 omega = np.arctan(dx / dy)
 #H1 = sqrt(dx^2 + dy^2);
 O2 = 3 * H1 * np.sin(omega)
 A2 = 3 * H1 * np.cos(omega)
-line(np.array([x(5),lines(co,1) + O2]),np.array([y(5),lines(co - 1,2) + A2]),'color','g','linewidth',2)
+plt.plot(np.array([x(5),lines(co,1) + O2]),np.array([y(5),lines(co - 1,2) + A2]),'color','g','linewidth',2)
 dx = np.abs(x(6) - lines(co - 1,3))
 dy = np.abs(y(6) - lines(co - 1,4))
 omega = np.arctan(dx / dy)
 #H1 = sqrt(dx^2 + dy^2);
 O2 = 3 * H1 * np.sin(omega)
 A2 = 3 * H1 * np.cos(omega)
-line(np.array([x(6),lines(co,3) - O2]),np.array([y(- 6),lines(co - 1,4) + A2]),'color','g','linewidth',2)
+plt.plot(np.array([x(6),lines(co,3) - O2]),np.array([y(- 6),lines(co - 1,4) + A2]),'color','g','linewidth',2)
