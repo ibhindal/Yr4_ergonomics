@@ -53,11 +53,12 @@ if (rows > rows2):
 
 plt.imshow(I)
 #defines scale of xray images based on a 'real world' dimension
+##add a line here to tell the user to select the scale
 widthx,widthy = ginput(2)
 distanceInPixels = np.sqrt((widthx(1) - widthx(2)) ** 2 + (widthy(1) - widthy(2)) ** 2)
 pixelwidth = distanceInPixels / 60
 MM = pixelwidth * 6
-#identifies boney features. 1&3 are ulna 2&4 are radius
+##identifies boney features. 1&3 are ulna 2&4 are radius
 x,y = ginput(6)
 #the y coordinate of the second image is matched to the first for
 #simplicity, this may need to change
@@ -70,7 +71,7 @@ x,y = ginput(6)
 
 #adds appropriate markers
 for i in np.arange(1,6+1).reshape(-1):
-    I = insertMarker(I,np.array([x(i),y(i)]),'x','color','red','size',20)
+    I = plt.plot(np.array([x(i),y(i)]),'x','color','red','size',20)
 
 plt.imshow(I)
 #identifies fracture location and labels
