@@ -144,12 +144,12 @@ for q in np.arange(1,loops+1,1).reshape(-1):
     vce = np.array([lines(2 * q - 1,1) - x(2),lines(2 * q - 1,2) - y(2),lines(2 * q - 1,3) - x(4)])
     vdf = np.array([lines(2 * q,1) - x(5),lines(2 * q,2) - y(5),lines(2 * q,3) - x(6)])
     #checks the angle to the plane for (xy) and (zy) before (xyz)
-    lines[2 * q - 1,5] = acosd(np.dot(va,vc) / (norm(va) * norm(vc)))
-    lines[2 * q,5] = acosd(np.dot(va,vd) / (norm(va) * norm(vd)))
-    lines[2 * q - 1,6] = acosd(np.dot(vb,ve) / (norm(vb) * norm(ve)))
-    lines[2 * q,6] = acosd(np.dot(vb,vf) / (norm(vb) * norm(vf)))
-    lines[2 * q - 1,7] = acosd(np.dot(vab,vce) / (norm(vab) * norm(vce)))
-    lines[2 * q,7] = acosd(np.dot(vab,vdf) / (norm(vab) * norm(vdf)))
+    lines[2 * q - 1,5] = np.arcsin(np.dot(va,vc) / (norm(va) * norm(vc)))
+    lines[2 * q,5] = np.arcsin(np.dot(va,vd) / (norm(va) * norm(vd)))
+    lines[2 * q - 1,6] = np.arcsin(np.dot(vb,ve) / (norm(vb) * norm(ve)))
+    lines[2 * q,6] = np.arcsin(np.dot(vb,vf) / (norm(vb) * norm(vf)))
+    lines[2 * q - 1,7] = np.arcsin(np.dot(vab,vce) / (norm(vab) * norm(vce)))
+    lines[2 * q,7] = np.arcsin(np.dot(vab,vdf) / (norm(vab) * norm(vdf)))
     #n = cross(vce, vdf);
 #d = abs(n'*((lines(2*q-1,1)-(lines(2*q-1,2) - y(2))))/sqrt(n'*n))
     #if the line is above the ideal threshold of 60 degrees validates it
