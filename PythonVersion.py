@@ -43,7 +43,7 @@ columns2 =0
 
 rows= I1.shape[0]
 columns = I1.shape[1] 
-print (rows,columns) 
+#print (rows,columns) 
 rows2= I2.shape[0]
 columns2 = I2.shape[1] 
 
