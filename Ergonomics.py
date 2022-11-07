@@ -1,5 +1,5 @@
-#import slicer as sl
-#import numpy as np
+import slicer as sl
+import numpy as np
 
 
 # Setting up k-wire information
