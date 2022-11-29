@@ -8,7 +8,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import cv2
+import cv2 # Need to pip install opencv-python
 
 
 # Setting up k-wire information
