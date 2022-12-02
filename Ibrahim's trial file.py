@@ -114,7 +114,7 @@ listofRvaluesof1 = np.arange(minR, maxR + 1, 1) # Creating a selection of x valu
 listofSvaluesof1 = np.arange(minS, maxS + 1, 1) # Creating a selection of y values that are 0.5 apart
 
 listofentrypoints = [] # Create a list of coordinates that are within our Lister's tubercle circle
-A = 
+A = points[1]
 
 
 
@@ -226,10 +226,7 @@ if handSide == 0:
         
     
     
-    
-    
-    
-    
+
     
     
 elif handSide == 1:
