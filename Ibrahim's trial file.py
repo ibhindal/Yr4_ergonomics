@@ -117,9 +117,6 @@ listofentrypoints = [] # Create a list of coordinates that are within our Lister
 A = points[1]
 
 
-
-
-
 point1of1=pointInScreen
 
 point2of1= [] #change this to a point where you want it to go
