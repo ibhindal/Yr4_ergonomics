@@ -8,7 +8,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-import cv2 # Need to pip install opencv-python
+import cv2
 
 
 # Setting up k-wire information
@@ -72,7 +72,8 @@ def simple_edge_detection(image):
 
    return coordinates
 
-
+def RAStoXYZ():
+    pass
 
 
 # =============================================================================
@@ -89,21 +90,14 @@ def simple_edge_detection(image):
 # Second k-wire
 # =============================================================================
 # Code to select centre of Lister's tubercle
-coordinatesListers = np.array([-8,3,-80]) # Random numbers for now - will be taken from 3D Slicer
+coordinatesListers = np.array([-8,42,-80]) # Random numbers for now - will be taken from 3D Slicer
 radius = 3 # Average radius (may not work)
 centreRS = (coordinatesListers[0], coordinatesListers[2])
 
-# Draw a circle on the image of Lister's tubercle - representing the area that the k-wire can enter - 2D
-# Other options - get user to select 2 ends and create circle from that - simultaneous equations
-"""
-fig, ax = plt.subplots()
-ax.add_patch(plt.Circle(centreRS, radius, fill = False))
+"""Need function to convert RAS to python here"""
 
-ax.set_aspect('equal', adjustable='datalim')
-ax.plot()   
-plt.show()"""
 
-# Finding x and y values that are within the Lister's Tubercle to trial entry points
+# Finding x and y values that are within the Lister's Tubercle to trial entry points - using a circle as a model
 
 minR = centreRS[0] - radius
 maxR = centreRS[0] + radius
@@ -129,7 +123,7 @@ point2 = (6,15,-128)
 m = (point2[2] - point1[2]) / (point2[1] - point1[1]) # Only need to know A and S as R wont change across k-wire
 c = point1[2] - m * point1[1]
 
-print("Bone axis equation: S = {}A + {}".format(m, c))
+#print("Bone axis equation: S = {}A + {}".format(m, c))
 
 # Calculate equation of each k-wire line
 if m == float(-1):
@@ -143,7 +137,7 @@ ckwire = []
 for i in listofentrypoints:    # Equation of line at each entry point
     ckwire.append(i[2] - mkwire * i[1])
     
-    print("K wire equation: S = {}A + {}, R = {}".format(mkwire, ckwire[-1], coordinatesListers[0])) # Prints equation of k wire and the plane it should be in
+    #print("K wire equation: S = {}A + {}, R = {}".format(mkwire, ckwire[-1], coordinatesListers[0])) # Prints equation of k wire and the plane it should be in
     
 # Edge detection of image
 img = cv2.imread('Kwire2Image.jpg', 0)
@@ -151,21 +145,27 @@ edges2nd = simple_edge_detection(img)
 
 ######### At this point, it may be best to compare to anatomy and rule out some values
 
-"""Not currently working properly as 3d slicer coordinates are different to python"""
+# This next bit will vary for left and right side
+# Calculating skin entry points
+
+"""Not currently working as 3d slicer coordinates are different to python"""
 if handSide == 0:
-    for kwire in ckwire:
-        testAedge = int(A + 1)
+    successfulValues = 0
+    
+    for kwire in ckwire: # For each potential k wire
+        testAedge = int(A + 1) # Going along the A axis (image x axis)
         keepGoing = 0
+        
         
         while keepGoing == 0:
             
-            SofTestA = mkwire * testAedge + kwire
-            coordsTestValue = (testAedge, SofTestA)
-            print(coordsTestValue)
+            SofTestA = mkwire * testAedge + kwire # Calculate S for each A
+            coordsTestValue = (testAedge, SofTestA) 
             
-            if coordsTestValue in edges2nd:
+            
+            if coordsTestValue in edges2nd: # Testing if the calculated coords from the line are equal to any coords from edge detection
                 entryPoint = (coordinatesListers[0], testAedge, SofTestA)
-                print(entryPoint)
+                
                 keepGoing = 1
             
             if testAedge > A + 100:
@@ -173,16 +173,23 @@ if handSide == 0:
             
             testAedge += 1
         
-        
+        if keepGoing == 0:
+            successfulValues += 1
+    
+    print("Successful kwire trajectories = {}".format(successfulValues))
+    
+    """ In theory k wire 2 is done
+    Current problems (and potential solutions):
+        - May not return a value because of rounding errors - solve by finding nearest?
+        - Coordinates not the same in 3D slicer and python - need to create a function to convert
+        - Image coordinates may vary depending on how the image is take - save view as image rather than screenshot
+        - No values from 3D slicer - use mark up to select lister's tubercle in 3D, bring A-S view to that and then save image, repeat with long axis calculation
     
     
     
+    """
     
-    
-    
-    
-    
-elif handSide == 1:
+elif handSide == 1: # Same code but opposite direction
     pass
 
 # =============================================================================
