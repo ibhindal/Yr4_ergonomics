@@ -50,7 +50,6 @@ print("Your k-wire diameter is " + str(kWireDiameter))
 
 # =============================================================================
 # Functions - may be needed multiple times so include here
-# 
 # =============================================================================
 
 # Edge detection algorithm - creates the edges and stores as an image, last 2 lines get the coordinates of the edges (increasing in x value)
@@ -143,7 +142,6 @@ for i in listofentrypoints:    # Equation of line at each entry point
 img = cv2.imread('Kwire2Image.jpg', 0)
 edges2nd = simple_edge_detection(img)
 
-######### At this point, it may be best to compare to anatomy and rule out some values
 
 # This next bit will vary for left and right side
 # Calculating skin entry points
@@ -206,9 +204,3 @@ elif handSide == 1: # Same code but opposite direction
 # =============================================================================
 
 
-
-# =============================================================================
-# Other
-# - convert RAS to XYZ
-# - extend line to skin rather than bone
-# =============================================================================
