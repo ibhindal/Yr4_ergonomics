@@ -151,11 +151,27 @@ edges2nd = simple_edge_detection(img)
 
 ######### At this point, it may be best to compare to anatomy and rule out some values
 
-# This next bit will vary for left and right side
-# Calculating skin entry points
+"""Not currently working properly as 3d slicer coordinates are different to python"""
 if handSide == 0:
-    for kwire in range(len(ckwire)):
-        startingAvalue = A + 1
+    for kwire in ckwire:
+        testAedge = int(A + 1)
+        keepGoing = 0
+        
+        while keepGoing == 0:
+            
+            SofTestA = mkwire * testAedge + kwire
+            coordsTestValue = (testAedge, SofTestA)
+            print(coordsTestValue)
+            
+            if coordsTestValue in edges2nd:
+                entryPoint = (coordinatesListers[0], testAedge, SofTestA)
+                print(entryPoint)
+                keepGoing = 1
+            
+            if testAedge > A + 100:
+                keepGoing = 1
+            
+            testAedge += 1
         
         
     
