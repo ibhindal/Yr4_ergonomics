@@ -4,6 +4,9 @@
 # Coordinates in 3D Slicer are in RAS System
 # =============================================================================
 
+# After input, confirm the input
+# Change the written input to click boxes
+
 #import slicer
 import numpy as np
 import matplotlib.pyplot as plt
@@ -204,3 +207,6 @@ elif handSide == 1: # Same code but opposite direction
 # =============================================================================
 
 
+# =============================================================================
+# Preview image
+# =============================================================================
