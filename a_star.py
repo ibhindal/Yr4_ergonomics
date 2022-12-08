@@ -4,14 +4,14 @@ import random
 from queue import PriorityQueue
 
 # Define a function to get the neighbors of a node
+# Define a function to get the neighbors of a node
 def get_neighbors(current_node):
     # Define the neighbors of the current node
-    neighbors = [(current_node[0] + 1, current_node[1]),
-                 (current_node[0] - 1, current_node[1]),
-                 (current_node[0], current_node[1] + 1),
-                 (current_node[0], current_node[1] - 1)]
-    
-    # Return the neighbors of the current node
+    neighbors = [(current_node[0] + 1, current_node[1], current_node[2]), (current_node[0] - 1, current_node[1], current_node[2]), (current_node[0], current_node[1] + 1, current_node[2]), (current_node[0], current_node[1] - 1, current_node[2]), (current_node[0], current_node[1], current_node[2] + 1), (current_node[0], current_node[1], current_node[2] - 1)]
+
+    # Filter out the neighbors that are outside the boundaries of the entry map
+    neighbors = [neighbor for neighbor in neighbors if neighbor[0] >= 0 and neighbor[0] < entry_map.shape[0] and neighbor[1] >= 0 and neighbor[1] < entry_map.shape[1] and neighbor[2] >= 0 and neighbor[2] < entry_map.shape[2]]
+
     return neighbors
 
 
