@@ -65,10 +65,15 @@ normal = np.cross(vector1, vector2)
 a=normal[0]
 b=normal[1]
 c=normal[2]
+# create a new vector from the normal and any of the original points
+ # and use it to find the d coefficient of the plane
+d = -np.dot(normal, fracturecoord1)
 
 fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z + d = 0
 #for the above  a, b and c are the simplified normal vector and d is if you sub in any of the fracture coordinates
 #into the plane equation and equate to zero
+
+
 # =============================================================================
 # Functions - may be needed multiple times so include here
 # =============================================================================
