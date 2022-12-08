@@ -5,29 +5,22 @@ import numpy as np
 import trimesh
 
 # Load the STL model from a file
-model = trimesh.load('model.stl')
+model = trimesh.load('belowwrist.stl')
 
-# Define the starting and ending points of the lines
-start_points = [(10, 10 , 10), (20, 10 ,20)]
-end_points = [(100, 50 ,100), (200, 50,200)]
+# Define the starting and ending points of the line
+start_point1 = (10, 10, 10)
+end_point = (100, 100, 100)
 
 # Extract the vertices and faces of the model
 vertices = model.vertices
-faces = model.faces
 
 # Create a binary image where white pixels represent allowed entry points and black pixels represent prohibited areas
-entry_map = np.zeros(vertices.shape, dtype=np.int8)
+entry_map = np.zeros((vertices.shape[0], vertices.shape[1], 3), dtype=np.int8)
 
-# Loop through the start and end points
-for start_point, end_point in zip(start_points, end_points):
-    # Set the starting and ending points in the entry map
-    entry_map[start_point[0], start_point[1]] = 1
-    entry_map[end_point[0], end_point[1]] = 2
-
-    # Set the prohibited areas in the entry map
-    prohibited_areas = np.argwhere(faces == 0)
-    for prohibited_area in prohibited_areas:
-        entry_map[prohibited_area[0], prohibited_area[1]] = -1
+# Set the starting and ending points in the entry map
+entry_map[start_point1[0], start_point1[1], start_point1[2]] = 1
+        
+entry_map[end_point[0], end_point[1], end_point[2]] = 2
 
     # Define a function to get the neighbors of a node
     # Define a function to get the neighbors of a node

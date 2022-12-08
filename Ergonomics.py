@@ -52,6 +52,24 @@ except:
 print("Your k-wire diameter is " + str(kWireDiameter))
 
 # =============================================================================
+# ask the user to choose 3 points to define the fracture plane
+# =============================================================================
+fracturecoord1 = np.array([1, 1, 1])
+fracturecoord2 = np.array([2, 2, 2])
+fracturecoord3 = np.array([3, 3, 3])
+
+# Calculate normal vector of fracture plane
+vector1 = fracturecoord2 - fracturecoord1
+vector2 = fracturecoord3 - fracturecoord1
+normal = np.cross(vector1, vector2)
+a=normal[0]
+b=normal[1]
+c=normal[2]
+
+fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z + d = 0
+#for the above  a, b and c are the simplified normal vector and d is if you sub in any of the fracture coordinates
+#into the plane equation and equate to zero
+# =============================================================================
 # Functions - may be needed multiple times so include here
 # =============================================================================
 
@@ -82,6 +100,45 @@ def RAStoXYZ():
 # First k-wire
 # =============================================================================
 
+
+coordinatesRadialStyloid = np.array([R,A,S]) # To be transformed
+
+# Define start and end points
+getNode('R') # should return values Rmin, Rmax, Amin, Amax, Smin and Smax
+
+start_point= [25.838743209838868, -11.009124755859375, -71.25559997558594]
+K1_volume = [2.97403722171164, 7.436612744439172, 9.758928644823208]
+
+end = np.array([4, 5, 6]) # change this to use isobels function instead
+
+
+x1 = start_point[0]  # getting the value of start point coord.
+y1 = start_point[1]
+z1 = start_point[2]
+
+fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z + d = 0
+
+# Calculate the distance from the start point to the plane
+distance_to_plane = abs(a*x1 + b*y1 + c*z1 + d) / (a**2 + b**2 + c**2)**0.5
+
+# Determine the point on the plane that is closest to the start point
+point_on_plane = [x2, y2, z2]
+point_on_plane[0] = (b**2 + c**2)*x1 - a*(b*y1 + c*z1 + d)
+point_on_plane[1] = (a**2 + c**2)*y1 - b*(a*x1 + c*z1 + d)
+point_on_plane[2] = (a**2 + b**2)*z1 - c*(a*x1 + b*y1 + d)
+point_on_plane = point_on_plane / (a**2 + b**2 + c**2)
+
+# Calculate the distance from the point on the plane to the detected edge point
+distance_to_edge = ((x2 - x3)**2 + (y2 - y3)**2 + (z2 - z3)**2)**0.5
+
+# Find the angle between the line connecting the start point to the point on the plane and the line connecting the point on the plane to the detected edge point
+cos_angle = ((x1 - x2)*(x2 - x3) + (y1 - y2)*(y2 - y3) + (z1 - z2)*(z2 - z3)) / (distance_to_plane * distance_to_edge)
+
+# Choose the line that is as close to 45 degrees to the long axis as possible and has the shortest length
+if cos_angle < 0.70710678118:  # 45 degrees = pi/4 = 0.70710678118
+    best_line = [start_point, point_on_plane]
+else:
+    best_line = [point_on_plane, detected_edge_point]
 
 
 
