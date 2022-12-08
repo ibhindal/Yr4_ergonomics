@@ -5,22 +5,46 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import cv2
+import matplotlib.patches as patches
+
+#"c:\Users\myusername\AppData\Local\NA-MIC\Slicer 4.11.20210226\Slicer.exe" c:\some\folder\MRHead.nrrd
+#=================================File Directory============================================================#
+"c:\Users\natha\OneDrive\Documents\Caitlin\Ergonomics\CT Scan\Annotated_Model_Slicer\2022-11-01-Scene.mrml"
+
+
 
 
 coordinatesRadialStyloid = np.array([R,A,S]) # To be transformed
 
-bounds = np.zeros(6)
 
-getNode('R').Getbounds(bounds) # should return values Rmin, Rmax, Amin, Amax, Smin and Smax
+getNode('R') # should return values Rmin, Rmax, Amin, Amax, Smin and Smax
+
+K1_centre= [25.838743209838868, -11.009124755859375, -71.25559997558594]
+K1_volume = [2.97403722171164, 7.436612744439172, 9.758928644823208]
+
+# Draw circle at the centre of the ROI box
 
 
+k1_circle = patches.Circle((
+
+
+
+
+
+
+
+
+
+#Notes and useful links
 
 # https://discourse.slicer.org/t/roi-to-ijk-coordinates/2589 << shows how to transform from RAS to IJK 
-
-
+#=============================================================================================================#
 #transformMatrix = vtk.vtkMatrix4x4() # I think transforms between these coordinate systems should be linear?
 #a = getNode('myROI').GetParentTransformNode()
 #b = ?
 #slicer.vtkMRMLTransformNode().GetMatrixTransformBetweenNodes(a, b, transformMatrix)
 #ijkCoordinates = transformMatrix.MultiplyPoint(rasCoordinates of ROI points appended by 1)
-
+#==============================================================================================================#
+# https://slicer.readthedocs.io/en/latest/developer_guide/mrml_overview.html  < MRML information
+#==============================================================================================================#
+#https://slicer.readthedocs.io/en/latest/developer_guide/script_repository.html <Slicer script repository
