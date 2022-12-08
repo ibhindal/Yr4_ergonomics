@@ -74,6 +74,8 @@ fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z + d = 0
 #into the plane equation and equate to zero
 
 
+#THIS NEEDS LIMITS TO HOW BIG TO MAKE IT.
+
 # =============================================================================
 # Functions - may be needed multiple times so include here
 # =============================================================================
@@ -113,37 +115,60 @@ getNode('R') # should return values Rmin, Rmax, Amin, Amax, Smin and Smax
 
 start_point= [25.838743209838868, -11.009124755859375, -71.25559997558594]
 K1_volume = [2.97403722171164, 7.436612744439172, 9.758928644823208]
-
+point_on_plane=[10 ,20,50] # this is a random point now. it should be a point on the fracture plane and will eventuslly be changed to all the ponts in the fracture plane.
 end = np.array([4, 5, 6]) # change this to use isobels function instead
 
 
-x1 = start_point[0]  # getting the value of start point coord.
-y1 = start_point[1]
-z1 = start_point[2]
+x1_1 = start_point[0]  # getting the value of start point coord. and initilaizing variables. the _1 refers to first k wire so that others an use xyand z without consequence
+y1_1 = start_point[1]
+z1_1 = start_point[2]
 
-fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z + d = 0
+x2_1 = point_on_plane[0]  # getting the value of point on fracture plane coord. and initilaizing variables
+y2_1 = point_on_plane[1]
+z2_1 = point_on_plane[2]
 
-# Calculate the distance from the start point to the plane
-distance_to_plane = abs(a*x1 + b*y1 + c*z1 + d) / (a**2 + b**2 + c**2)**0.5
+x3_1= end[0]#same for end. will change to isobel code later when modified to 3D
+y3_1= end[1]
+z3_1= end[2]
 
-# Determine the point on the plane that is closest to the start point
-point_on_plane = [x2, y2, z2]
-point_on_plane[0] = (b**2 + c**2)*x1 - a*(b*y1 + c*z1 + d)
-point_on_plane[1] = (a**2 + c**2)*y1 - b*(a*x1 + c*z1 + d)
-point_on_plane[2] = (a**2 + b**2)*z1 - c*(a*x1 + b*y1 + d)
-point_on_plane = point_on_plane / (a**2 + b**2 + c**2)
+#Making a cube to get a range of start points
+# Define the start point as the center of one face of the cube and the side length r
+#need to agree on this
+r = 10  #sidelength
 
-# Calculate the distance from the point on the plane to the detected edge point
-distance_to_edge = ((x2 - x3)**2 + (y2 - y3)**2 + (z2 - z3)**2)**0.5
+# Generate a list of all points within the cube
+startpoints1 = []
+for theta in range(0, 360):
+    for phi in range(0, 180):
+        x = x1_1 + r * (np.cos(theta) * np.sin(phi)+1)/2
+        y = y1_1 + r * (np.sin(theta) * np.sin(phi)+1)/2
+        z = z1_1 + r * (np.cos(phi)+1)/2
+        startpoints1.append([x, y, z])
 
-# Find the angle between the line connecting the start point to the point on the plane and the line connecting the point on the plane to the detected edge point
-cos_angle = ((x1 - x2)*(x2 - x3) + (y1 - y2)*(y2 - y3) + (z1 - z2)*(z2 - z3)) / (distance_to_plane * distance_to_edge)
+best_lines = []
+for point in startpoints1:
+    start_point = point
 
-# Choose the line that is as close to 45 degrees to the long axis as possible and has the shortest length
-if cos_angle < 0.70710678118:  # 45 degrees = pi/4 = 0.70710678118
-    best_line = [start_point, point_on_plane]
-else:
-    best_line = [point_on_plane, detected_edge_point]
+    # Calculate the distance from the start point to the point on the plane
+    distance_to_plane = ((x1_1 - x2_1)**2 + (y1_1 - y2_1)**2 + (z1_1 - z2_1)**2)**0.5
+
+    # Calculate the distance from the point on the plane to the detected edge point
+    distance_to_edge = ((x2_1 - x3_1)**2 + (y2_1 - y3_1)**2 + (z2_1 - z3_1)**2)**0.5
+
+    # Choose the line that has the shortest length
+    if distance_to_plane + distance_to_edge < distance_to_plane:
+        best_line = [start_point, detected_edge_point]
+    else:
+        best_line = [start_point, point_on_plane, detected_edge_point]
+
+    # Find the angle between the line connecting the start point to the point on the plane and the line connecting the point on the plane to the detected edge point
+    cos_angle = ((x1_1 - x2_1)*(x2_1 - x3_1) + (y1_1 - y2_1)*(y2_1 - y3_1) + (z1_1 - z2_1)*(z2_1 - z3_1)) / (distance_to_plane * distance_to_edge)
+
+    # Choose the line that is as close to 45 degrees to the long axis as possible and has the shortest length
+    if cos_angle < 0.70710678118:  # 45 degrees = pi/4 = 0.70710678118
+        best_line = [start_point, point_on_plane]
+    else:
+        best_line = [point_on_plane, detected_edge_point]
 
 
 
