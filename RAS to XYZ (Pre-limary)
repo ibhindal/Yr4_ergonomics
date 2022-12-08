@@ -1,0 +1,38 @@
+# Define the local coordinate system
+local_origin = (0, 0, 0)
+local_x_axis = (1, 0, 0)
+local_y_axis = (0, 1, 0)
+local_z_axis = (0, 0, 1)
+
+# Define the global coordinate system
+global_origin = (10, 20, 30)
+global_x_axis = (1, 0, 0)
+global_y_axis = (0, 1, 0)
+global_z_axis = (0, 0, 1)
+
+# Calculate the rotation matrix between the local and global coordinate systems
+local_x_vector = np.array(local_x_axis) - np.array(local_origin)
+local_y_vector = np.array(local_y_axis) - np.array(local_origin)
+local_z_vector = np.array(local_z_axis) - np.array(local_origin)
+global_x_vector = np.array(global_x_axis) - np.array(global_origin)
+global_y_vector = np.array(global_y_axis) - np.array(global_origin)
+global_z_vector = np.array(global_z_axis) - np.array(global_origin)
+
+local_x_vector = local_x_vector / np.linalg.norm(local_x_vector)
+local_y_vector = local_y_vector / np.linalg.norm(local_y_vector)
+local_z_vector = local_z_vector / np.linalg.norm(local_z_vector)
+global_x_vector = global_x_vector / np.linalg.norm(global_x_vector)
+global_y_vector = global_y_vector / np.linalg.norm(global_y_vector)
+global_z_vector = global_z_vector / np.linalg.norm(global_z_vector)
+
+rotation_matrix = np.array([
+    [np.dot(global_x_vector, local_x_vector), np.dot(global_x_vector, local_y_vector), np.dot(global_x_vector, local_z_vector)],
+    [np.dot(global_y_vector, local_x_vector), np.dot(global_y_vector, local_y_vector), np.dot(global_y_vector, local_z_vector)],
+    [np.dot(global_z_vector, local_x_vector), np.dot(global_z_vector, local_y_vector), np.dot(global_z_vector, local_z_vector)]
+])
+
+# Define a point in the local coordinate system
+local_point = (1, 2, 3)
+
+# Transform the point to the global coordinate system
+global_point = np.dot(rotation_matrix, local_point) + global_origin
