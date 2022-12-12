@@ -1,13 +1,13 @@
 # =============================================================================
 # Notes for this
 # Changing entry point to begin with, assuming the angle is the same (45 deg), if time permitted, angle can be changed
-# Coordinates in 3D Slicer are in RAS System
+# Coordinates in 3D Slicer are in RAS System (R=x, A=y, S=z)
 # =============================================================================
 
 # After input, confirm the input
 # Change the written input to click boxes
 
-#import slicer
+import slicer
 import numpy as np
 import matplotlib.pyplot as plt
 import math
@@ -51,9 +51,15 @@ except:
 
 print("Your k-wire diameter is " + str(kWireDiameter))
 
+# Code to calculate the RAS origin in the global CS
+#slicer.util.selectModule("View Controllers")
+originLocation = np.array([106.5822, 128, -121.3822])
+
+
 # =============================================================================
 # ask the user to choose 3 points to define the fracture plane
 # =============================================================================
+
 fracturecoord1 = np.array([1, 1, 1])
 fracturecoord2 = np.array([2, 2, 2])
 fracturecoord3 = np.array([3, 3, 3])
@@ -65,6 +71,7 @@ normal = np.cross(vector1, vector2)
 a=normal[0]
 b=normal[1]
 c=normal[2]
+
 # create a new vector from the normal and any of the original points
  # and use it to find the d coefficient of the plane
 d = -np.dot(normal, fracturecoord1)
@@ -99,17 +106,34 @@ def simple_edge_detection(image):
 
    return coordinates
 
-def RAStoXYZ():
-    pass
+def transformCoordinate(L_temp, p_LC):
+    # L_temp: point that we are interested in
+    # p_LC: location of the RAS origin relative to global origin
+    # x: left/right, y: up/down, z: in/out of page
+    
+    # Adding 1 to end of p_LCS and transforming to column vector
+    p_LCST = np.append(p_LC, 1)
+    p_LCS = p_LCST.reshape(-1, 1)
+    
+    L = L_temp.reshape(-1, 1)   # Column vector
+    R = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])     # Rotation matrix (identity matrix as no rotation taking place)
 
+    T_1 = np.concatenate((R, L), axis=1)                # Partial creation of transformation matrix
+
+    finish_matrix = np.array([[0, 0, 0, 1]])            # Other part needed for transformation matrix
+
+    T_GL = np.concatenate((T_1, finish_matrix))         # Final transformation matrix
+
+    return np.dot(T_GL, p_LCS)                          # Result of coordinates - gives a 
 
 # =============================================================================
 # First k-wire
 # =============================================================================
 
 
-coordinatesRadialStyloid = np.array([R,A,S]) # To be transformed
 
+coordinatesRadialStyloid = np.array([R,A,S]) # To be transformed
+ 
 # Define start and end points
 getNode('R') # should return values Rmin, Rmax, Amin, Amax, Smin and Smax
 
@@ -117,12 +141,12 @@ start_point= [25.838743209838868, -11.009124755859375, -71.25559997558594]
 K1_volume = [2.97403722171164, 7.436612744439172, 9.758928644823208]
 point_on_plane=[10 ,20,50] # this is a random point now. it should be a point on the fracture plane and will eventuslly be changed to all the ponts in the fracture plane.
 end = np.array([4, 5, 6]) # change this to use isobels function instead
-
+ 
 
 x1_1 = start_point[0]  # getting the value of start point coord. and initilaizing variables. the _1 refers to first k wire so that others an use xyand z without consequence
 y1_1 = start_point[1]
 z1_1 = start_point[2]
-
+ 
 x2_1 = point_on_plane[0]  # getting the value of point on fracture plane coord. and initilaizing variables
 y2_1 = point_on_plane[1]
 z2_1 = point_on_plane[2]
@@ -135,7 +159,7 @@ z3_1= end[2]
 # Define the start point as the center of one face of the cube and the side length r
 #need to agree on this
 r = 10  #sidelength
-
+ 
 # Generate a list of all points within the cube
 startpoints1 = []
 for theta in range(0, 360):
@@ -144,23 +168,23 @@ for theta in range(0, 360):
         y = y1_1 + r * (np.sin(theta) * np.sin(phi)+1)/2
         z = z1_1 + r * (np.cos(phi)+1)/2
         startpoints1.append([x, y, z])
-
+ 
 best_lines = []
 for point in startpoints1:
     start_point = point
-
+ 
     # Calculate the distance from the start point to the point on the plane
     distance_to_plane = ((x1_1 - x2_1)**2 + (y1_1 - y2_1)**2 + (z1_1 - z2_1)**2)**0.5
-
+ 
     # Calculate the distance from the point on the plane to the detected edge point
     distance_to_edge = ((x2_1 - x3_1)**2 + (y2_1 - y3_1)**2 + (z2_1 - z3_1)**2)**0.5
-
+ 
     # Choose the line that has the shortest length
     if distance_to_plane + distance_to_edge < distance_to_plane:
         best_line = [start_point, detected_edge_point]
     else:
         best_line = [start_point, point_on_plane, detected_edge_point]
-
+ 
     # Find the angle between the line connecting the start point to the point on the plane and the line connecting the point on the plane to the detected edge point
     cos_angle = ((x1_1 - x2_1)*(x2_1 - x3_1) + (y1_1 - y2_1)*(y2_1 - y3_1) + (z1_1 - z2_1)*(z2_1 - z3_1)) / (distance_to_plane * distance_to_edge)
 
@@ -169,17 +193,18 @@ for point in startpoints1:
         best_line = [start_point, point_on_plane]
     else:
         best_line = [point_on_plane, detected_edge_point]
-
+ 
 
 
 
 
 
 # =============================================================================
-# Second k-wire
+# Second k-wire 
 # =============================================================================
 # Code to select centre of Lister's tubercle
-coordinatesListers = np.array([-8,42,-80]) # Random numbers for now - will be taken from 3D Slicer
+coordinatesRASListers = np.array([-8,42,-80]) # Random numbers for now - will be taken from 3D Slicer
+coordinatesListers = transformCoordinate(coordinatesRASListers, originLocation)
 radius = 3 # Average radius (may not work)
 centreRS = (coordinatesListers[0], coordinatesListers[2])
 
@@ -188,31 +213,33 @@ centreRS = (coordinatesListers[0], coordinatesListers[2])
 
 # Finding x and y values that are within the Lister's Tubercle to trial entry points - using a circle as a model
 
-minR = centreRS[0] - radius
-maxR = centreRS[0] + radius
-minS = centreRS[1] - radius
-maxS = centreRS[1] + radius
+minX = centreRS[0] - radius
+maxX = centreRS[0] + radius
+minY = centreRS[1] - radius
+maxY = centreRS[1] + radius
 
-listofRvalues = np.arange(minR, maxR + 1, 1) # Creating a selection of x values that are 0.5 apart
-listofSvalues = np.arange(minS, maxS + 1, 1) # Creating a selection of y values that are 0.5 apart
+listofRvalues = np.arange(minX, maxX + 1, 1) # Creating a selection of x values that are 0.5 apart
+listofSvalues = np.arange(minY, maxY + 1, 1) # Creating a selection of y values that are 0.5 apart
 
 listofentrypoints = [] # Create a list of coordinates that are within our Lister's tubercle circle
-A = coordinatesListers[1]
+Z = coordinatesListers[1]
 
-for R in listofRvalues:
-    for S in listofSvalues:
-        if (R - centreRS[0]) ** 2 + (S - centreRS[1]) ** 2 <= radius ** 2: # Equation of a circle
-            listofentrypoints.append((R, A, S))
+for X in listofRvalues:
+    for Y in listofSvalues:
+        if (X - centreRS[0]) ** 2 + (Y - centreRS[1]) ** 2 <= radius ** 2: # Equation of a circle
+            listofentrypoints.append((X, Y, Z))
          
 # Determine long axis - currently selecting 2 points on sagittal view
-point1 = (-8,16,-71)
-point2 = (6,15,-128)
+pointRAS1 = (-8,16,-71)
+pointRAS2 = (6,15,-128)
+point1 = transformCoordinate(pointRAS1, originLocation)
+point2 = transformCoordinate(pointRAS2, originLocation)
 
 # Equation of straight line - potentially temporary code
-m = (point2[2] - point1[2]) / (point2[1] - point1[1]) # Only need to know A and S as R wont change across k-wire
+m = (point2[2] - point1[2]) / (point2[1] - point1[1]) # Only need to know Y and Z as X wont change across k-wire
 c = point1[2] - m * point1[1]
 
-#print("Bone axis equation: S = {}A + {}".format(m, c))
+#print("Bone axis equation: Y = {}Z + {}".format(m, c))
 
 # Calculate equation of each k-wire line
 if m == float(-1):
@@ -241,25 +268,25 @@ if handSide == 0:
     successfulValues = 0
     
     for kwire in ckwire: # For each potential k wire
-        testAedge = int(A + 1) # Going along the A axis (image x axis)
+        testZedge = int(Z + 1) # Going along the Z axis (image x axis)
         keepGoing = 0
         
         
         while keepGoing == 0:
             
-            SofTestA = mkwire * testAedge + kwire # Calculate S for each A
-            coordsTestValue = (testAedge, SofTestA) 
+            YofTestZ = mkwire * testZedge + kwire # Calculate S for each A
+            coordsTestValue = (testZedge, YofTestZ) 
             
             
             if coordsTestValue in edges2nd: # Testing if the calculated coords from the line are equal to any coords from edge detection
-                entryPoint = (coordinatesListers[0], testAedge, SofTestA)
+                entryPoint = (coordinatesListers[0], testZedge, YofTestZ)
                 
                 keepGoing = 1
             
-            if testAedge > A + 100:
+            if testZedge > Z + 100:
                 keepGoing = 1
             
-            testAedge += 1
+            testZedge += 1
         
         if keepGoing == 0:
             successfulValues += 1
