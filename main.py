@@ -324,3 +324,6 @@ elif handSide == 1: # Same code but opposite direction
 # =============================================================================
 # Preview image
 # =============================================================================
+
+
+# Section to convert to something Solidworks can use
