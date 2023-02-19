@@ -3,9 +3,13 @@
 # Open Slicer>Open Python Console
 
 w=slicer.qSlicerMarkupsPlaceWidget()
+
 w.setMRMLScene(slicer.mrmlScene)
+
 markupsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsCurveNode")
+
 w.setCurrentNode(slicer.mrmlScene.GetNodeByID(markupsNode.GetID()))
+
 # Hide all buttons and only show place button
 w.buttonsVisible=False
 w.placeButton().show()
