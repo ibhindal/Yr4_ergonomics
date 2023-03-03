@@ -309,6 +309,60 @@ for i in finallist2nd:
 # =============================================================================
 # Third k-wire
 # =============================================================================
+start_point3= [-9.145, 3.769, -77.482]
+end_point3= [5.904, 18.973, -120.381]
+
+# Determine coordinates x,y,z of start point
+x1_3 = start_point3[0]
+y1_3 = start_point3[1]
+z1_3 = start_point3[2]
+
+# Determine coordinates x,y,z of end point
+x2_3 = end_point3[0]
+y2_3 = end_point3[1]
+z2_3 = end_point3[2]
+
+# Initialize list of points
+start_points3 = []
+end_points3 = []
+
+# Generate random points within a sphere centered at the start point chosen by user
+for i in range(num_points):
+    # Generate random coordinates within a sphere of radius L value (to be determined)
+    r = L * math.sqrt(random.uniform(0, 1))
+    theta = random.uniform(0, 2 * math.pi)
+    phi = math.acos(1 - 2 * random.uniform(0, 1))
+    x1_randS3 = x1_3 + r * math.sin(phi) * math.cos(theta)
+    y1_randS3 = y1_3 + r * math.sin(phi) * math.sin(theta)
+    z1_randS3 = z1_3 + r * math.cos(phi)
+    x2_randE3 = x2_3 + r * math.sin(phi) * math.cos(theta)
+    y2_randE3 = y2_3 + r * math.sin(phi) * math.sin(theta)
+    z2_randE3 = z2_3 + r * math.cos(phi)
+    
+
+    # Add the random point to the list
+    start_points3.append((x1_randS3, y1_randS3, z1_randS3))
+    end_points3.append((x2_randE3, y2_randE3, z2_randE3))
+
+return start_points3
+return end_points3
+#how to choose points?
+
+
+# Determine Vector of K-wire 3 between start and end point 
+vectorK3 = (x2_3 - x1_3, y2_3 - y1_3, z2_3 - z1_3)
+
+# Calculate the parameter t of the line equation for the intersection point with the fracture plane
+    t_3 = -(a*start_point3[0] + b*start_point3[1] + c*start_point3[2] + d) / (a*vectorK3[0] + b*vectorK3[1] + c*vectorK3[2]) # uses a,b,c,d from fracture_plane
+
+# Calculate the intersection point
+    intersection_3 = [start_point3[0] + t*vectorK3[0], start_point3[1] + t*vectorK3[1], start_point3[2] + t*vectorK3[2]]
+
+# Check if the intersection point lies on the line segment
+if (intersection_3[0] - start_point3[0])/vectorK3[0] == (intersection_3[1] - start_point3[1])/vectorK3[1] == (intersection_3[2] - start_point3[2])/vectorK3[2]:
+    return True
+else:
+    return False
 
 
 
