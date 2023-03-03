@@ -127,48 +127,6 @@ fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z = d
 
 #THIS NEEDS LIMITS TO HOW BIG TO MAKE IT.      
 
-# =============================================================================
-# Functions - may be needed multiple times so include here
-# =============================================================================
-
-# Edge detection algorithm - creates the edges and stores as an image, last 2 lines get the coordinates of the edges (increasing in x value)
-def simple_edge_detection(image): 
-   edges_detected = cv2.Canny(image , 100, 200) 
-   images = [image , edges_detected]
-
-   location = [121, 122] 
-   for loc, edge_image in zip(location, images): 
-     plt.subplot(loc) 
-     plt.imshow(edge_image, cmap='gray')
-
-   cv2.imwrite('edge_detected.png', edges_detected) 
-   plt.savefig('edge_plot.png') 
-   plt.show()
-   
-   indices = np.where(edges_detected != [0])
-   coordinates = list(zip(indices[0], indices[1]))
-
-   return coordinates
-
-def transformCoordinate(L_temp, p_LC):
-    # L_temp: point that we are interested in
-    # p_LC: location of the RAS origin relative to global origin
-    # x: left/right, y: up/down, z: in/out of page
-    
-    # Adding 1 to end of p_LCS and transforming to column vector
-    p_LCST = np.append(p_LC, 1)
-    p_LCS = p_LCST.reshape(-1, 1)
-    
-    L = L_temp.reshape(-1, 1)   # Column vector
-    R = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])     # Rotation matrix (identity matrix as no rotation taking place)
-
-    T_1 = np.concatenate((R, L), axis=1)                # Partial creation of transformation matrix
-
-    finish_matrix = np.array([[0, 0, 0, 1]])            # Other part needed for transformation matrix
-
-    T_GL = np.concatenate((T_1, finish_matrix))         # Final transformation matrix
-
-    return np.dot(T_GL, p_LCS)                          # Result of coordinates - gives a 
 
 # =============================================================================
 # First k-wire
