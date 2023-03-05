@@ -132,70 +132,140 @@ fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z = d
 # First k-wire
 # =============================================================================
 
+import numpy as np
+import cv2 
 
 
-coordinatesRadialStyloid = np.array([R,A,S]) # To be transformed
- 
-# Define start and end points
-getNode('R') # should return values Rmin, Rmax, Amin, Amax, Smin and Smax
+# Manually type coordinates into UI and store in the list below - UI to be completed later
 
-start_point= [25.838743209838868, -11.009124755859375, -71.25559997558594]
-K1_volume = [2.97403722171164, 7.436612744439172, 9.758928644823208]
-point_on_plane=[10 ,20,50] # this is a random point now. it should be a point on the fracture plane and will eventuslly be changed to all the ponts in the fracture plane.
-end = np.array([4, 5, 6]) # change this to use isobels function instead
- 
 
-x1_1 = start_point[0]  # getting the value of start point coord. and initilaizing variables. the _1 refers to first k wire so that others an use xyand z without consequence
-y1_1 = start_point[1]
-z1_1 = start_point[2]
- 
-x2_1 = point_on_plane[0]  # getting the value of point on fracture plane coord. and initilaizing variables
-y2_1 = point_on_plane[1]
-z2_1 = point_on_plane[2]
+start_1= np.array([33.271, -13.546, -73.915])  # replace with user input values
+# edit as user input 
 
-x3_1= end[0]#same for end. will change to isobel code later when modified to 3D
-y3_1= end[1]
-z3_1= end[2]
+end_1 = np.array([-5.504,-13.546,-98.405])
 
-#Making a cube to get a range of start points
-# Define the start point as the center of one face of the cube and the side length r
-#need to agree on this
-r = 10  #sidelength
- 
-# Generate a list of all points within the cube
-startpoints1 = []
-for theta in range(0, 360):
-    for phi in range(0, 180):
-        x = x1_1 + r * (np.cos(theta) * np.sin(phi)+1)/2
-        y = y1_1 + r * (np.sin(theta) * np.sin(phi)+1)/2
-        z = z1_1 + r * (np.cos(phi)+1)/2
-        startpoints1.append([x, y, z])
- 
-best_lines = []
-for point in startpoints1:
-    start_point = point
- 
-    # Calculate the distance from the start point to the point on the plane
-    distance_to_plane = ((x1_1 - x2_1)**2 + (y1_1 - y2_1)**2 + (z1_1 - z2_1)**2)**0.5
- 
-    # Calculate the distance from the point on the plane to the detected edge point
-    distance_to_edge = ((x2_1 - x3_1)**2 + (y2_1 - y3_1)**2 + (z2_1 - z3_1)**2)**0.5
- 
-    # Choose the line that has the shortest length
-    if distance_to_plane + distance_to_edge < distance_to_plane:
-        best_line = [start_point, detected_edge_point]
-    else:
-        best_line = [start_point, point_on_plane, detected_edge_point]
- 
-    # Find the angle between the line connecting the start point to the point on the plane and the line connecting the point on the plane to the detected edge point
-    cos_angle = ((x1_1 - x2_1)*(x2_1 - x3_1) + (y1_1 - y2_1)*(y2_1 - y3_1) + (z1_1 - z2_1)*(z2_1 - z3_1)) / (distance_to_plane * distance_to_edge)
+print("Initial k-wire 1 point: ", start_1)
+print("K-wire 1 end point", end_1)
 
-    # Choose the line that is as close to 45 degrees to the long axis as possible and has the shortest length
-    if cos_angle < 0.70710678118:  # 45 degrees = pi/4 = 0.70710678118
-        best_line = [start_point, point_on_plane]
-    else:
-        best_line = [point_on_plane, detected_edge_point]
- 
+# Using coordinates, calculate angle of trajectory from long axis of bone
+# Long axis of bone is manually selected by technician/user - coordinates of start and end point are manually input, as above
+
+
+axis_1 = np.array([11.286,-16.893,-70.172])
+
+axis_2 = np.array([-6.286,-13.961,-128.351])
+
+#Calculate angle of trajectory between the long axis of the bone and k-wire 1
+# Calculate the slope of k_1
+
+# Calculate the slope-intercept form for k1
+m1 = (end_1[0] - start_1[0]) / (end_1[2] - start_1[2])
+n1 = (end_1[1] - start_1[1]) / (end_1[2] - start_1[2])
+p1 = 1
+
+b1 = start_1[0] - m1 * start_1[2]
+c1 = start_1[1] - n1 * start_1[2]
+d1 = start_1[2]
+
+#print(f"The slope-intercept form for line1 is [{m1:.2f}, {n1:.2f}, {b1:.2f}].")
+
+
+# Calculate the slope of long axis of bone
+
+# Calculate the slope-intercept form for long axis of bone
+
+m2 = (axis_2[0] - axis_1[0]) / (axis_2[2] - axis_1[2])
+n2 = (axis_2[1] - axis_1[1]) / (axis_2[2] - axis_1[2])
+p2 = 1
+
+b2 = axis_1[0] - m1 * axis_1[2]
+c2 = axis_1[1] - n1 * axis_1[2]
+d2 = axis_1[2]
+
+#print(f"The slope-intercept form for line2 is [{m2:.2f}, {n2:.2f}, {b2:.2f}].")
+
+
+# Calculate the angle between the two lines using the dot product and the arccosine function (np.arccos) and the magnitude (np.linalg.norm):
+
+cos_theta = np.dot([m1, n1, -1], [m2, n2, -1]) / (np.linalg.norm([m1, n1, -1]) * np.linalg.norm([m2, n2, -1]))
+theta = np.arccos(cos_theta)
+
+print(f"The angle between the original line and the long axis of the bone is {np.degrees(theta):.2f} degrees.")
+
+# Code undergoes verification
+
+#Does it go through the fracture plane?
+
+#Does it contact the articulating surface?
+#Does the end point protrude away from the radius? (edge detection?)
+#Does it cross other k-wires at the fracture level?
+
+# If any of last 3 are yes:
+
+
+#Centre of cuboid which is start_1 coordinates, are on the face of the cuboid (on saggital plane)
+
+cuboid_points = []
+
+
+# Define the length of the cuboid relative to the start point
+
+cuboid_length_min = start_1[0] + 0
+cuboid_length_max = start_1[0] + 6
+
+# Define the width of the cuboid relative to the start point
+cuboid_width_max= start_1[1] + 3
+cuboid_width_min = start_1[1] - 3
+
+# Define the height of the cuboid relative to the start point
+cuboid_height_max = start_1[2] + 7
+cuboid_height_min = start_1[2] - 7
+
+# Use a nested for loop to store all the possible coordinates within the specified range menioned above
+# arange() function creates a sequence of numbers that are evenly spaced within a specified range
+
+for x in np.arange(cuboid_length_min, cuboid_length_max):
+    for y in np.arange(cuboid_width_min, cuboid_width_max):
+        for z in np.arange(cuboid_height_min, cuboid_height_max):
+            cuboid_points.append([x, y, z])
+
+#print(cuboid_points)
+
+# Choose optimum start point that creates 45 degree angle from long axis of bone
+
+# convert 45 degrees to radians
+theta = np.radians(45)
+
+# initialize variables for storing the best point and angle so far
+best_point = None
+best_angle_diff = np.inf
+
+# iterate over all points in the cuboid_points list
+for point in cuboid_points:
+    # calculate the slope of line formed by current point and end_1
+    
+    m_new = (end_1[0] - point[0]) / (end_1[2] - point[2])
+    n_new = (end_1[1] - point[1]) / (end_1[2] - point[2])
+
+    
+    # calculate the angle between the new line and the long axis of the bone
+    cos_theta1 = np.dot([m_new, n_new, -1], [m2, n2, -1]) / (np.linalg.norm([m_new, n_new, -1]) * np.linalg.norm([m2, n2, -1]))
+    theta1 = np.arccos(cos_theta1)
+
+    cos_theta2 = np.dot([m_new, n_new, -1], [-m2, -n2, -1]) / (np.linalg.norm([m_new, n_new, -1]) * np.linalg.norm([-m2, -n2, -1]))
+    theta2 = np.arccos(cos_theta2)
+    
+    # calculate the difference between the angle and 45 degrees
+    angle_diff1 = abs(theta1 - theta)
+    angle_diff2 = abs(theta2 - theta)
+    
+    # select the best point so far
+    if angle_diff1 < best_angle_diff or angle_diff2 < best_angle_diff:
+        best_point = point
+        best_angle_diff = min(angle_diff1, angle_diff2)
+
+print(f"The best k-wire 1 start point is {best_point} with angle difference of {np.degrees(best_angle_diff):.2f} degrees (from 45 degrees to long axis of bone).")
+
 
 
 
