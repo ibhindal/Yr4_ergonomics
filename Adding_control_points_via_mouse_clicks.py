@@ -2,6 +2,7 @@
 # Instructions:
 # Open Slicer>Open Python Console
 
+import slicer
 w=slicer.qSlicerMarkupsPlaceWidget()
 
 w.setMRMLScene(slicer.mrmlScene)
