@@ -276,7 +276,6 @@ print(f"The best k-wire 1 start point is {best_point} with angle difference of {
 # =============================================================================
 
 entry2nd = np.array([8.293667793273926,-3.8751466666720233,-78.97350782229576])
-exit2nd = np.array([8.293667793273926,-19.152924444449795,-91.42206749307765])
 
 radius = 5          # 5 mm ulnar to Lister's tubercle - used as a radius
 circlecentre2nd = (entry2nd[0], entry2nd[2])
@@ -303,44 +302,45 @@ fullpointslist = []
 
 for i in listofentrypoints2nd:
 
-    # Find the angle from the x axis
+    # Find the angle of the k wire from the x axis
     alpha_2 = (180 / math.pi) * math.atan((long2[2] - long1[2]) / (long2[1] - long1[1]))
     angle_2 = 45 - alpha_2
     
-    # Find equation of line
+    # Find equation of the k wire line
     mkwire_2 = math.tan(angle_2)
     ckwire_2 = i[2] - i[1] * mkwire_2
        
-    # Create 2nd point on line
+    # Create 2nd point on the line
     Fx_2 = i[0]
     Fy_2 = i[1] + 100
     Fz_2 = mkwire_2 * Fy_2 + ckwire_2
     
     point2_2 = np.array([Fx_2, Fy_2, Fz_2])
     
-    # Check line goes through plane
+    # Check line goes through fracture plane
     crossesPlane_2 = checkCrossesPlane(fracture_plane, i, point2_2)
     
     if crossesPlane_2 == False:
         continue
     
-    # Find crossing point on plane and save
+    # Find crossing point on plane and save - used to check that the lines don't cross at one point
     crosspoint = crossingPoint(fracture_plane, i, point2_2)    
     
     # Calculate end point
     edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
     edgeline2_2 = np.array([8.293667793273926,-15.29739697044306,-105.40117338175465])
     
-    medge_2 = (edgeline2_2[2] - edgeline1_2[2]) / (edgeline2_2[1] - edgeline1_2[1])
-    cedge_2 = edgeline1_2[2] - medge_2 * edgeline1_2[1]
+    medge_2 = (edgeline2_2[2] - edgeline1_2[2]) / (edgeline2_2[1] - edgeline1_2[1])     # Find equation of the edge of the bone
+    cedge_2 = edgeline1_2[2] - medge_2 * edgeline1_2[1]             
     
-    yedge_2 = (cedge_2 - ckwire_2) / (mkwire_2 - medge_2)
+    yedge_2 = (cedge_2 - ckwire_2) / (mkwire_2 - medge_2)           # Calculate exit point by finding where the k wire line and the edge line crosses
     zedge_2 = mkwire_2 * yedge_2 + ckwire_2
     
     exitpoint = (i[0], yedge_2, zedge_2)
     
     # Save start point and end point
     fullpointslist.append([i, exitpoint])
+
 # =============================================================================
 # Third k-wire
 # =============================================================================
