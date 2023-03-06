@@ -301,7 +301,6 @@ for X in listofxentry2nd:
 fullpointslist = []
 
 for i in listofentrypoints2nd:
-
     # Find the angle of the k wire from the x axis
     alpha_2 = (180 / math.pi) * math.atan((long2[2] - long1[2]) / (long2[1] - long1[1]))
     angle_2 = 45 - alpha_2
@@ -330,7 +329,7 @@ for i in listofentrypoints2nd:
     edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
     edgeline2_2 = np.array([8.293667793273926,-15.29739697044306,-105.40117338175465])
     
-    medge_2 = (edgeline2_2[2] - edgeline1_2[2]) / (edgeline2_2[1] - edgeline1_2[1])     # Find equation of the edge of the bone
+    medge_2 = (edgeline2_2[2] - edgeline1_2[2]) / (edgeline2_2[1] - edgeline1_2[1])     # Find equation of the edge of the bone - may change this to edge detection
     cedge_2 = edgeline1_2[2] - medge_2 * edgeline1_2[1]             
     
     yedge_2 = (cedge_2 - ckwire_2) / (mkwire_2 - medge_2)           # Calculate exit point by finding where the k wire line and the edge line crosses
