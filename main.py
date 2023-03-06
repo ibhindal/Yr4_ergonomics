@@ -299,41 +299,48 @@ for X in listofxentry2nd:
         if (X - circlecentre2nd[0]) ** 2 + (Y - circlecentre2nd[1]) ** 2 <= radius ** 2:      # Equation of a circle
             listofentrypoints2nd.append((X, Y, Z))                                 # Saving values that are in the circle
 
+fullpointslist = []
 
+for i in listofentrypoints2nd:
 
-
-
-# Creating a list of potential exit points 
-# Modeling the potential exit points as on a straight line
-distance2nd = 5         # How far away from the chosen entry point
-
-minZexit2nd = exit2nd[2] - distance2nd
-maxZexit2nd = exit2nd[2] + distance2nd
-
-listofZexit2nd = np.arange(minZexit2nd, maxZexit2nd + 1, 1)         # Creating a selection of x values that are 1mm apart
-Xexit2nd = exit2nd[0]
-Yexit2nd = exit2nd[1]
-
-listofexitpoints2nd = [(Xexit2nd, Yexit2nd, Z) for Z in listofZexit2nd]         
-combinedentryexit2nd = [[a, b] for a in listofentrypoints2nd for b in listofexitpoints2nd]
-
-# Checking if it crosses the fracture plane - returns a list of potential start and end points
-finallist2nd = []
-
-for i in combinedentryexit2nd:
-    result = checkCrossesPlane(fracture_plane, i[0], i[1])
+    # Find the angle from the x axis
+    alpha_2 = (180 / math.pi) * math.atan((long2[2] - long1[2]) / (long2[1] - long1[1]))
+    angle_2 = 45 - alpha_2
     
-    if result == True:
-        finallist2nd.append(i)
-
-checkangles2nd = []
-
-for i in finallist2nd:
-    angle = checkAngle(i, long1, long2)
+    # Find equation of line
+    mkwire_2 = math.tan(angle_2)
+    ckwire_2 = i[2] - i[1] * mkwire_2
+       
+    # Create 2nd point on line
+    Fx_2 = i[0]
+    Fy_2 = i[1] + 100
+    Fz_2 = mkwire_2 * Fy_2 + ckwire_2
     
-    if angle > 40 and angle <= 45:          ###### Need values!!!!
-        checkangles2nd.append(i)
-
+    point2_2 = np.array([Fx_2, Fy_2, Fz_2])
+    
+    # Check line goes through plane
+    crossesPlane_2 = checkCrossesPlane(fracture_plane, i, point2_2)
+    
+    if crossesPlane_2 == False:
+        continue
+    
+    # Find crossing point on plane and save
+    crosspoint = crossingPoint(fracture_plane, i, point2_2)    
+    
+    # Calculate end point
+    edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
+    edgeline2_2 = np.array([8.293667793273926,-15.29739697044306,-105.40117338175465])
+    
+    medge_2 = (edgeline2_2[2] - edgeline1_2[2]) / (edgeline2_2[1] - edgeline1_2[1])
+    cedge_2 = edgeline1_2[2] - medge_2 * edgeline1_2[1]
+    
+    yedge_2 = (cedge_2 - ckwire_2) / (mkwire_2 - medge_2)
+    zedge_2 = mkwire_2 * yedge_2 + ckwire_2
+    
+    exitpoint = (i[0], yedge_2, zedge_2)
+    
+    # Save start point and end point
+    fullpointslist.append([i, exitpoint])
 # =============================================================================
 # Third k-wire
 # =============================================================================
