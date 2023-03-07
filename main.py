@@ -158,7 +158,7 @@ fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z = d
 # =============================================================================
 # First k-wire
 # =============================================================================
-"""
+
 # Manually type coordinates into UI and store in the list below - UI to be completed later
 
 
@@ -292,14 +292,17 @@ print(f"The best k-wire 1 start point is {best_point} with angle difference of {
 
 
 
-"""
+
+
+# =============================================================================
+# Second k-wire 
+# =============================================================================
 
 # =============================================================================
 # Second k-wire 
 # =============================================================================
 
 entry2nd = np.array([8.293667793273926,-3.8751466666720233,-78.97350782229576])
-exit2nd = np.array([8.293667793273926,-19.152924444449795,-91.42206749307765])
 
 radius = 5          # 5 mm ulnar to Lister's tubercle - used as a radius
 circlecentre2nd = (entry2nd[0], entry2nd[2])
@@ -322,7 +325,7 @@ for X in listofxentry2nd:
         if (X - circlecentre2nd[0]) ** 2 + (Y - circlecentre2nd[1]) ** 2 <= radius ** 2:      # Equation of a circle
             listofentrypoints2nd.append((X, Y, Z))                                 # Saving values that are in the circle
 
-fullpointslist = []
+fullpointslist_2 = []
 
 for i in listofentrypoints2nd:
 
@@ -347,8 +350,7 @@ for i in listofentrypoints2nd:
     if crossesPlane_2 == False:
         continue
     
-    # Find crossing point on plane and save
-    crosspoint = crossingPoint(fracture_plane, i, point2_2)    
+  
     
     # Calculate end point
     edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
@@ -363,7 +365,8 @@ for i in listofentrypoints2nd:
     exitpoint = (i[0], yedge_2, zedge_2)
     
     # Save start point and end point
-    fullpointslist.append([i, exitpoint])
+    fullpointslist_2.append([i, exitpoint])
+
     
 # =============================================================================
 # Third k-wire
@@ -433,6 +436,8 @@ else:
 # - no intersections with nerves, arteries etc
 # =============================================================================
 
+    # Find crossing point on plane and save
+    #crosspoint_2 = crossingPoint(fracture_plane, i, point2_2)  
 
 # =============================================================================
 # Preview image
