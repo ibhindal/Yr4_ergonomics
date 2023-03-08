@@ -51,7 +51,7 @@ print("Your k-wire diameter is " + str(kWireDiameter))
 
 # Select two points for the long axis
 long1 = np.array([10.671098037037027,-16.05396500000001,-71.40649860082304])
-long2 = np.array([-6.576912251028801,-16.05396500000001,-128.03204181069958])
+long2 = np.array([-6.576912251028801,-16.521,-128.03204181069958])
 
 # =============================================================================
 # Functions - may be needed multiple times so include here
