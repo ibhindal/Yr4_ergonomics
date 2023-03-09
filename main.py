@@ -50,6 +50,15 @@ print("Your k-wire diameter is " + str(kWireDiameter))
 long1 = np.array([10.484512548250422,-14.307704321150922,-71.77198431949066])
 long2 = np.array([-5.572349548339844,-14.094643592834473,-128.3506317138672]) ################# Error
 
+if long1[0] == long2[0]:
+    long1[0] += 0.000000003
+    
+elif long1[1] == long2[1]:
+    long1[1] += 0.000000003
+    
+elif long1[2] == long2[2]:
+    long1[2] += 0.000000003
+    
 # =============================================================================
 # Functions - may be needed multiple times so include here
 # =============================================================================
@@ -199,7 +208,7 @@ for x in np.arange(cuboid_length_min, cuboid_length_max):
 
 
 #Combined Isobel's code for exit point calculation
-kwire_1_exit = []
+fullpointslist_1 = []
 
 for i in cuboid_points:
 
@@ -240,7 +249,7 @@ for i in cuboid_points:
     exitpoint = (i[0], yedge_2, zedge_2)
     
     # Save start point and end point --- Where is the start point in this? - Naomi :)
-    kwire_1_exit.append([i, exitpoint])
+    fullpointslist_1.append([i, exitpoint])
 
 
 #print("Exit points: ",kwire_1_exit)
