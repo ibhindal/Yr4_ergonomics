@@ -216,16 +216,16 @@ for i in cuboid_points:
     Fy_2 = i[1] + 100
     Fz_2 = mkwire_1 * Fy_2 + ckwire_1
     
-    point2_2 = np.array([Fx_2, Fy_2, Fz_2])
+    point2_1 = np.array([Fx_2, Fy_2, Fz_2])
     
     # Check line goes through plane
-    crossesPlane_2 = checkCrossesPlane(fracture_plane, i, point2_2)
+    crossesPlane_2 = checkCrossesPlane(fracture_plane, i, point2_1)
     
     if crossesPlane_2 == False:
         continue
     
     # Find crossing point on plane and save
-    crosspoint = crossingPoint(fracture_plane, i, point2_2)    
+    crosspoint = crossingPoint(fracture_plane, i, point2_1)    
     
     # Calculate end point
     edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
