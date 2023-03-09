@@ -228,8 +228,8 @@ for i in cuboid_points:
     crosspoint = crossingPoint(fracture_plane, i, point2_1)    
     
     # Calculate end point
-    edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
-    edgeline2_2 = np.array([8.293667793273926,-15.29739697044306,-105.40117338175465])
+    edgeline1_2 = np.array([-4.15329933,-18.09798622,-85.37478638])
+    edgeline2_2 = np.array([-11.87345505,-14.09032822,-126.0778656])
     
     medge_2 = (edgeline2_2[2] - edgeline1_2[2]) / (edgeline2_2[1] - edgeline1_2[1])
     cedge_2 = edgeline1_2[2] - medge_2 * edgeline1_2[1]
