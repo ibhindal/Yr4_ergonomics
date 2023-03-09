@@ -4,12 +4,11 @@
 #       - 2 points for long axis
 #       - 2 points (entry and exit) per k-wire
 #       - 3 points on fracture plane    
+# Note: Solidworks Y and Z are opposite to Slicer Y and Z
 # =============================================================================
 
 import numpy as np
-import matplotlib.pyplot as plt
 import math
-import cv2
 
 
 # Setting up k-wire information
@@ -22,8 +21,6 @@ if handInput.lower() == "left" or handInput.lower() == "l":
 elif handInput.lower() == "right" or handInput.lower() == "r":
     handSide = 1
     print("Your arm is the right one")
-
-angleofentry = 45               # This is taken from research as the ideal angle
 
 
 # User can input a k-wire thickness or type x which chooses the average value for them - change this to box selection
@@ -50,8 +47,8 @@ except:
 print("Your k-wire diameter is " + str(kWireDiameter))
 
 # Select two points for the long axis
-long1 = np.array([10.671098037037027,-16.05396500000001,-71.40649860082304])
-long2 = np.array([-6.576912251028801,-16.521,-128.03204181069958])
+long1 = np.array([10.484512548250422,-14.307704321150922,-71.77198431949066])
+long2 = np.array([-5.572349548339844,-14.094643592834473,-128.3506317138672]) ################# Error
 
 # =============================================================================
 # Functions - may be needed multiple times so include here
@@ -101,6 +98,8 @@ def checkAngle(points, long1, long2):
     return angle
 
 def crossingPoint(plane, point1, point2):
+    # 3D lines can be written as parametric equations in the form: x = u + at, y = v + bt, z = w + ct. 
+    # If t is calculated for when the line crosses the plane, the x, y and z values can be calculated
     A = plane[0]
     B = plane[1]
     C = plane[2]
@@ -114,10 +113,13 @@ def crossingPoint(plane, point1, point2):
     Fy = point2[1]
     Fz = point2[2]
     
-    # Calculate denominator - if this is 0, the line doesn't cross the plane
+    # Calculate denominator
     td = A*Ex - A*Fx + B*Ey - B*Fy + C*Ez - C*Fz        
     
+    # Calculate numerator
     tn = D - A*Ex - B*Ey - C*Ez
+    
+    # Calculate t
     t = tn / td
     
     xcross = Ex + (Ex - Fx) * t
@@ -126,14 +128,21 @@ def crossingPoint(plane, point1, point2):
     
     crossingcoords = (np.array([xcross, ycross, zcross]))
     return crossingcoords
-        
+
+def lengthWire(point1, point2):
+    # Find the distance between 2 points
+    lsquared = (point2[0] - point1[0])**2 + (point2[1] - point1[1])**2 + (point2[2] - point1[2])**2
+    l = lsquared ** 0.5
+    
+    return l
+
 # =============================================================================
 # Define the fracture plane
 # =============================================================================
 
-fracturecoord1 = np.array([-2.3462682181069994,-16.05396500000001,-87.02733810699588])                # User selects 3 points on the plane (points can't be colinear) - will change UI
-fracturecoord2 = np.array([13.358031272888184,-12.44699478149414,-96.24616241455078])
-fracturecoord3 = np.array([4.430776596069336,-7.407128810882568,-90.65580749511719])
+fracturecoord1 = np.array([14.077756881713867,-11.07859992980957,-92.56031036376953])                # User selects 3 points on the plane (points can't be colinear) - will change UI
+fracturecoord2 = np.array([-0.03193238005042076,-10.694211959838867,-86.19048309326172])
+fracturecoord3 = np.array([7.713603496551514,-19.633007049560547,-86.71790313720703])
 
 # Calculate normal vector of fracture plane
 vector1 = fracturecoord2 - fracturecoord1
@@ -158,7 +167,7 @@ fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z = d
 # =============================================================================
 # First k-wire
 # =============================================================================
-
+"""
 # Manually type coordinates into UI and store in the list below - UI to be completed later
 
 
@@ -292,17 +301,13 @@ print(f"The best k-wire 1 start point is {best_point} with angle difference of {
 
 
 
-
-
-# =============================================================================
-# Second k-wire 
-# =============================================================================
+"""
 
 # =============================================================================
 # Second k-wire 
 # =============================================================================
 
-entry2nd = np.array([8.293667793273926,-3.8751466666720233,-78.97350782229576])
+entry2nd = np.array([7.5939459800720215,-3.464972496032715,-80.25806427001953])
 
 radius = 5          # 5 mm ulnar to Lister's tubercle - used as a radius
 circlecentre2nd = (entry2nd[0], entry2nd[2])
@@ -325,7 +330,7 @@ for X in listofxentry2nd:
         if (X - circlecentre2nd[0]) ** 2 + (Y - circlecentre2nd[1]) ** 2 <= radius ** 2:      # Equation of a circle
             listofentrypoints2nd.append((X, Y, Z))                                 # Saving values that are in the circle
 
-fullpointslist_2 = []
+fullpointslist = []
 
 for i in listofentrypoints2nd:
 
@@ -350,7 +355,8 @@ for i in listofentrypoints2nd:
     if crossesPlane_2 == False:
         continue
     
-  
+    # Find crossing point on plane and save
+    crosspoint = crossingPoint(fracture_plane, i, point2_2)    
     
     # Calculate end point
     edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
@@ -365,8 +371,7 @@ for i in listofentrypoints2nd:
     exitpoint = (i[0], yedge_2, zedge_2)
     
     # Save start point and end point
-    fullpointslist_2.append([i, exitpoint])
-
+    fullpointslist.append([i, exitpoint])
     
 # =============================================================================
 # Third k-wire
@@ -435,13 +440,15 @@ else:
 # - no intersections at fracture line
 # - no intersections with nerves, arteries etc
 # =============================================================================
+valueswork = False
 
-    # Find crossing point on plane and save
-    #crosspoint_2 = crossingPoint(fracture_plane, i, point2_2)  
+    
+
 
 # =============================================================================
 # Preview image
+# - length of wire in bone
 # =============================================================================
 
 
-# Section to convert to something Solidworks can use
+# Section to convert to something Solidworks can use - swap the Y and Z values around
