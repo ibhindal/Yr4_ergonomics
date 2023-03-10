@@ -383,8 +383,8 @@ for i in listofentrypoints3rd:
     crosspoint = crossingPoint(fracture_plane, i, point2_3)    
     
     # Calculate end point
-    edgeline1_3 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
-    edgeline2_3 = np.array([8.293667793273926,-15.29739697044306,-105.40117338175465])
+    edgeline1_3 = np.array([])
+    edgeline2_3 = np.array([])
     
     medge_3 = (edgeline2_3[2] - edgeline1_3[2]) / (edgeline2_3[1] - edgeline1_3[1])
     cedge_3 = edgeline1_3[2] - medge_3 * edgeline1_3[1]
