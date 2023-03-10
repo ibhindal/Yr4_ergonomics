@@ -328,62 +328,74 @@ for i in listofentrypoints2nd:
 # =============================================================================
 # Third k-wire
 # =============================================================================
-"""
-start_point3= [-9.145, 3.769, -77.482]
-end_point3= [5.904, 18.973, -120.381]
+entry3rd = np.array[-9.145, 3.769, -77.482];
 
-# Determine coordinates x,y,z of start point
-x1_3 = start_point3[0]
-y1_3 = start_point3[1]
-z1_3 = start_point3[2]
+# add list of points
 
-# Determine coordinates x,y,z of end point
-x2_3 = end_point3[0]
-y2_3 = end_point3[1]
-z2_3 = end_point3[2]
+radius = 5
 
-# Initialize list of points
-start_points3 = []
-end_points3 = []
+circlecentre3rd = (entry3rd[0], entry3rd[2])
 
-# Generate random points within a sphere centered at the start point chosen by user
-for i in range(num_points):
-    # Generate random coordinates within a sphere of radius L value (to be determined)
-    r = L * math.sqrt(random.uniform(0, 1))
-    theta = random.uniform(0, 2 * math.pi)
-    phi = math.acos(1 - 2 * random.uniform(0, 1))
-    x1_randS3 = x1_3 + r * math.sin(phi) * math.cos(theta)
-    y1_randS3 = y1_3 + r * math.sin(phi) * math.sin(theta)
-    z1_randS3 = z1_3 + r * math.cos(phi)
-    x2_randE3 = x2_3 + r * math.sin(phi) * math.cos(theta)
-    y2_randE3 = y2_3 + r * math.sin(phi) * math.sin(theta)
-    z2_randE3 = z2_3 + r * math.cos(phi)
+# Finding the max and min x and y values that could be within 5mm of selected entry
+minXentry3rd = circlecentre3rd[0] - radius
+maxXentry3rd = circlecentre3rd[0] + radius
+minYentry3rd = circlecentre3rd[1] - radius
+maxYentry3rd = circlecentre3rd[1] + radius
+
+# Creating a list of potential entry points 
+listofxentry3rd = np.arange(minXentry3rd, maxXentry3rd + 1, 1)         # Creating a selection of x values that are 1mm apart
+listofyentry3rd = np.arange(minYentry3rd, maxYentry3rd + 1, 1)         # Creating a selection of y values that are 1mm apart
+
+listofentrypoints3rd = []                              # Create a list of coordinates that are within 5mm of selected point
+Z = entry3rd[1]
+
+for X in listofxentry3rd:
+    for Y in listofyentry3rd:
+        if (X - circlecentre3rd[0]) ** 2 + (Y - circlecentre3rd[1]) ** 2 <= radius ** 2:      # Equation of a circle
+            listofentrypoints3rd.append((X, Y, Z))                                 # Saving values that are in the circle
+
+fullpointslist = []
+
+for i in listofentrypoints3rd:
+
+    # Find the angle from the x axis
+    alpha_3 = (180 / math.pi) * math.atan((long2[2] - long1[2]) / (long2[1] - long1[1]))
+    angle_3 = 45 - alpha_3
     
-
-    # Add the random point to the list
-    start_points3.append((x1_randS3, y1_randS3, z1_randS3))
-    end_points3.append((x2_randE3, y2_randE3, z2_randE3))
-
-return start_points3
-return end_points3
-#how to choose points?
-
-
-# Determine Vector of K-wire 3 between start and end point 
-vectorK3 = (x2_3 - x1_3, y2_3 - y1_3, z2_3 - z1_3)
-
-# Calculate the parameter t of the line equation for the intersection point with the fracture plane
-    t_3 = -(a*start_point3[0] + b*start_point3[1] + c*start_point3[2] + d) / (a*vectorK3[0] + b*vectorK3[1] + c*vectorK3[2]) # uses a,b,c,d from fracture_plane
-
-# Calculate the intersection point
-    intersection_3 = [start_point3[0] + t*vectorK3[0], start_point3[1] + t*vectorK3[1], start_point3[2] + t*vectorK3[2]]
-
-# Check if the intersection point lies on the line segment
-if (intersection_3[0] - start_point3[0])/vectorK3[0] == (intersection_3[1] - start_point3[1])/vectorK3[1] == (intersection_3[2] - start_point3[2])/vectorK3[2]:
-    return True
-else:
-    return False
-"""
+    # Find equation of line
+    mkwire_3 = math.tan(angle_3)
+    ckwire_3 = i[2] - i[1] * mkwire_3
+       
+    # Create 3rd point on line
+    Fx_3 = i[0]
+    Fy_3 = i[1] + 100
+    Fz_3 = mkwire_3 * Fy_3 + ckwire_3
+    
+    point2_3 = np.array([Fx_3, Fy_3, Fz_3])
+    
+    # Check line goes through plane
+    crossesPlane_3 = checkCrossesPlane(fracture_plane, i, point2_3)
+    
+    if crossesPlane_3 == False:
+        continue
+    
+    # Find crossing point on plane and save
+    crosspoint = crossingPoint(fracture_plane, i, point2_3)    
+    
+    # Calculate end point
+    edgeline1_3 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
+    edgeline2_3 = np.array([8.293667793273926,-15.29739697044306,-105.40117338175465])
+    
+    medge_3 = (edgeline2_3[2] - edgeline1_3[2]) / (edgeline2_3[1] - edgeline1_3[1])
+    cedge_3 = edgeline1_3[2] - medge_3 * edgeline1_3[1]
+    
+    yedge_3 = (cedge_3 - ckwire_3) / (mkwire_3 - medge_3)
+    zedge_3 = mkwire_3 * yedge_3 + ckwire_3
+    
+    exitpoint_3 = (i[0], yedge_3, zedge_3)
+    
+    # Save start point and end point
+    fullpointslist.append([i, exitpoint_3])
 
 
 
