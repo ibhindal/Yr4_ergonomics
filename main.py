@@ -2,13 +2,14 @@
 # Notes for this
 # Input points:
 #       - 2 points for long axis
-#       - 2 points (entry and exit) per k-wire
+#       - 1 point (entry) per k-wire
 #       - 3 points on fracture plane    
 # Note: Solidworks Y and Z are opposite to Slicer Y and Z
 # =============================================================================
 
 import numpy as np
 import math
+import csv
 
 
 # Setting up k-wire information
@@ -44,11 +45,11 @@ except:
      print("This is not a valid number")
  
 
-print("Your k-wire diameter is " + str(kWireDiameter))
+print("Your k-wire diameter is " + str(kWireDiameter) + "\n")
 
 # Select two points for the long axis
 long1 = np.array([10.484512548250422,-14.307704321150922,-71.77198431949066])
-long2 = np.array([-5.572349548339844,-14.094643592834473,-128.3506317138672]) ################# Error
+long2 = np.array([-5.572349548339844,-14.094643592834473,-128.3506317138672])
 
 if long1[0] == long2[0]:
     long1[0] += 0.000000003
@@ -138,12 +139,87 @@ def crossingPoint(plane, point1, point2):
     crossingcoords = (np.array([xcross, ycross, zcross]))
     return crossingcoords
 
+def sortList(entry, points):
+    calculatedistance = []
+    
+    for i in points:
+        distance = math.sqrt((i[0] - entry[0])**2 + (i[1] - entry[1])**2 + (i[2] - entry[2])**2)
+        calculatedistance.append([i[0], i[1], i[2], distance])
+    
+    calculatedistance.sort(key = lambda x: x[3])
+    listdistances = [(i[0], i[1], i[2]) for i in calculatedistance]
+
+    return listdistances
+
+def checkIntersect(line1, line2):
+    # Defining the individual components
+    line1point1 = line1[0]
+    line1point2 = line1[1]
+    line2point1 = line2[0]
+    line2point2 = line2[1]
+    
+    x11 = line1point1[0]
+    x12 = line1point2[0]
+    x21 = line2point1[0]
+    x22 = line2point2[0]
+    
+    # Defining t: used for x = x11 + (x11-x12)t
+    tnum = x21 - x11
+    tdenom = x11 - x12 - x21 + x22
+    
+    if tdenom == 0:
+        return True
+    
+    t = tnum / tdenom
+    
+    # Defining y and z components
+    y11 = line1point1[1]
+    y12 = line1point2[1]
+    y21 = line2point1[1]
+    y22 = line2point2[1]
+    
+    z11 = line1point1[2]
+    z12 = line1point2[2]
+    z21 = line2point1[2]
+    z22 = line2point2[2]
+    
+    x = x11 + (x11 - x12) * t
+    y = y11 + (y11 - y12) * t
+    z = z11 + (z11 - z12) * t
+    
+    xmin = min(x11, x12, x21, x22)
+    xmax = max(x11, x12, x21, x22)
+    
+    # Check if they intersect within the wrist - alright if it intersects outside of this as the wires would be cut
+    if x > xmin or x < xmax:
+        return False
+    
+    ymin = min(y11, y12, y21, y22)
+    ymax = max(y11, y12, y21, y22)
+    
+    if y > ymin or y < ymax:
+        return False
+    
+    zmin = min(z11, z12, z21, z22)
+    zmax = max(z11, z12, z21, z22)
+    
+    if z > zmin or z < zmax:
+        return False
+    
+    return True
+    
 def lengthWire(point1, point2):
     # Find the distance between 2 points
     lsquared = (point2[0] - point1[0])**2 + (point2[1] - point1[1])**2 + (point2[2] - point1[2])**2
     l = lsquared ** 0.5
     
     return l
+
+def swapYZ(currentY, currentZ):
+    newZ = currentY
+    newY = currentZ
+    
+    return newY, newZ
 
 # =============================================================================
 # Define the fracture plane
@@ -204,13 +280,17 @@ cuboid_height_min = entry1st[2] - 7
 for x in np.arange(cuboid_length_min, cuboid_length_max):
     for y in np.arange(cuboid_width_min, cuboid_width_max):
         for z in np.arange(cuboid_height_min, cuboid_height_max):
-            cuboid_points.append([x, y, z])
+            cuboid_points.append((x, y, z))
 
+# Used to sort entry points by closest to initial chosen value
+cuboid_points_sorted_1 = sortList(entry1st, cuboid_points)
 
 #Combined Isobel's code for exit point calculation
 fullpointslist_1 = []
+edgeline1_1 = np.array([-4.15329933,-18.09798622,-85.37478638])
+edgeline2_1 = np.array([-11.87345505,-14.09032822,-126.0778656])
 
-for i in cuboid_points:
+for i in cuboid_points_sorted_1:
 
     # Find the angle from the x axis
     alpha_1 = (180 / math.pi) * math.atan((long2[2] - long1[2]) / (long2[1] - long1[1]))
@@ -221,35 +301,31 @@ for i in cuboid_points:
     ckwire_1 = i[2] - i[1] * mkwire_1
        
     # Create 2nd point on line
-    Fx_2 = i[0]
-    Fy_2 = i[1] + 100
-    Fz_2 = mkwire_1 * Fy_2 + ckwire_1
+    Fx_1 = i[0]
+    Fy_1 = i[1] + 100
+    Fz_1 = mkwire_1 * Fy_1 + ckwire_1
     
-    point2_1 = np.array([Fx_2, Fy_2, Fz_2])
+    point2_1 = np.array([Fx_1, Fy_1, Fz_1])
     
     # Check line goes through plane
-    crossesPlane_2 = checkCrossesPlane(fracture_plane, i, point2_1)
+    crossesPlane_1 = checkCrossesPlane(fracture_plane, i, point2_1)
     
-    if crossesPlane_2 == False:
+    if crossesPlane_1 == False:
         continue
     
-    # Find crossing point on plane and save
-    crosspoint = crossingPoint(fracture_plane, i, point2_1)    
-    
     # Calculate end point
-    edgeline1_2 = np.array([-4.15329933,-18.09798622,-85.37478638])
-    edgeline2_2 = np.array([-11.87345505,-14.09032822,-126.0778656])
+
     
-    medge_2 = (edgeline2_2[2] - edgeline1_2[2]) / (edgeline2_2[1] - edgeline1_2[1])
-    cedge_2 = edgeline1_2[2] - medge_2 * edgeline1_2[1]
+    medge_1 = (edgeline2_1[2] - edgeline1_1[2]) / (edgeline2_1[1] - edgeline1_1[1])
+    cedge_1 = edgeline1_1[2] - medge_1 * edgeline1_1[1]
     
-    yedge_2 = (cedge_2 - ckwire_1) / (mkwire_1 - medge_2)
-    zedge_2 = mkwire_1 * yedge_2 + ckwire_1
+    yedge_1 = (cedge_1 - ckwire_1) / (mkwire_1 - medge_1)
+    zedge_1 = mkwire_1 * yedge_1 + ckwire_1
     
-    exitpoint = (i[0], yedge_2, zedge_2)
+    exitpoint_1 = (i[0], yedge_1, zedge_1)
     
-    # Save start point and end point --- Where is the start point in this? - Naomi :)
-    fullpointslist_1.append([i, exitpoint])
+    # Save start point and end point
+    fullpointslist_1.append([i, exitpoint_1])
 
 
 #print("Exit points: ",kwire_1_exit)
@@ -282,9 +358,12 @@ for X in listofxentry2nd:
         if (X - circlecentre2nd[0]) ** 2 + (Y - circlecentre2nd[1]) ** 2 <= radius ** 2:      # Equation of a circle
             listofentrypoints2nd.append((X, Y, Z))                                 # Saving values that are in the circle
 
-fullpointslist = []
+entrypoints2ndsorted = sortList(entry2nd, listofentrypoints2nd)
+fullpointslist_2 = []
+edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
+edgeline2_2 = np.array([8.293667793273926,-15.29739697044306,-105.40117338175465])
 
-for i in listofentrypoints2nd:
+for i in entrypoints2ndsorted:
 
     # Find the angle from the x axis
     alpha_2 = (180 / math.pi) * math.atan((long2[2] - long1[2]) / (long2[1] - long1[1]))
@@ -307,12 +386,8 @@ for i in listofentrypoints2nd:
     if crossesPlane_2 == False:
         continue
     
-    # Find crossing point on plane and save
-    crosspoint = crossingPoint(fracture_plane, i, point2_2)    
-    
     # Calculate end point
-    edgeline1_2 = np.array([8.293667793273926,-20.673918930041154,-82.19624485596708])
-    edgeline2_2 = np.array([8.293667793273926,-15.29739697044306,-105.40117338175465])
+
     
     medge_2 = (edgeline2_2[2] - edgeline1_2[2]) / (edgeline2_2[1] - edgeline1_2[1])
     cedge_2 = edgeline1_2[2] - medge_2 * edgeline1_2[1]
@@ -323,40 +398,58 @@ for i in listofentrypoints2nd:
     exitpoint = (i[0], yedge_2, zedge_2)
     
     # Save start point and end point
-    fullpointslist.append([i, exitpoint])
+    fullpointslist_2.append([i, exitpoint])
     
+
+
 # =============================================================================
 # Third k-wire
 # =============================================================================
-entry3rd = np.array[-9.145, 3.769, -77.482];
+entry3rd = np.array([10.072124481201172,-5.580814361572266,-71.33698272705078]);
 
-# add list of points
 
-radius = 5
+cuboid_points_tocheck3 = []
 
-circlecentre3rd = (entry3rd[0], entry3rd[2])
+# Approx values
+# Define the length of the cuboid relative to the start point
+cuboid_length_min3 = entry1st[0] - 10
+cuboid_length_max3 = entry1st[0] + 10
 
-# Finding the max and min x and y values that could be within 5mm of selected entry
-minXentry3rd = circlecentre3rd[0] - radius
-maxXentry3rd = circlecentre3rd[0] + radius
-minYentry3rd = circlecentre3rd[1] - radius
-maxYentry3rd = circlecentre3rd[1] + radius
+# Define the width of the cuboid relative to the start point
+cuboid_width_max3 = entry1st[1] + 1
+cuboid_width_min3 = entry1st[1] - 1
 
-# Creating a list of potential entry points 
-listofxentry3rd = np.arange(minXentry3rd, maxXentry3rd + 1, 1)         # Creating a selection of x values that are 1mm apart
-listofyentry3rd = np.arange(minYentry3rd, maxYentry3rd + 1, 1)         # Creating a selection of y values that are 1mm apart
+# Define the height of the cuboid relative to the start point
+cuboid_height_max3 = entry1st[2] + 2
+cuboid_height_min3 = entry1st[2] - 2
 
-listofentrypoints3rd = []                              # Create a list of coordinates that are within 5mm of selected point
-Z = entry3rd[1]
+# Use a nested for loop to store all the possible coordinates within the specified range menioned above
+# arange() function creates a sequence of numbers that are evenly spaced within a specified range
 
-for X in listofxentry3rd:
-    for Y in listofyentry3rd:
-        if (X - circlecentre3rd[0]) ** 2 + (Y - circlecentre3rd[1]) ** 2 <= radius ** 2:      # Equation of a circle
-            listofentrypoints3rd.append((X, Y, Z))                                 # Saving values that are in the circle
+for x in np.arange(cuboid_length_min3, cuboid_length_max3):
+    for y in np.arange(cuboid_width_min3, cuboid_width_max3):
+        for z in np.arange(cuboid_height_min3, cuboid_height_max3):
+            cuboid_points_tocheck3.append((x, y, z))
 
-fullpointslist = []
+cuboid_points3 = []
 
-for i in listofentrypoints3rd:
+# Remove any points that are too close to 2nd k wire entry point (within 5mm)
+for i in cuboid_points_tocheck3:
+    if (i[1] - entry2nd[1])**2 + (i[2] - entry2nd[2])**2 < 5:
+        continue
+    
+    else:
+        cuboid_points3.append(i)
+
+# Used to sort entry points by closest to initial chosen value
+cuboid_points_sorted_3 = sortList(entry3rd, cuboid_points3)
+
+
+fullpointslist_3 = []
+edgeline1_3 = np.array([10.072124481201172,-25.60199401602685,-74.79238270951227])
+edgeline2_3 = np.array([10.072124481201172,-16.455347003628788,-89.42701792934915])
+
+for i in cuboid_points_sorted_3:
 
     # Find the angle from the x axis
     alpha_3 = (180 / math.pi) * math.atan((long2[2] - long1[2]) / (long2[1] - long1[1]))
@@ -382,9 +475,8 @@ for i in listofentrypoints3rd:
     # Find crossing point on plane and save
     crosspoint = crossingPoint(fracture_plane, i, point2_3)    
     
-    # Calculate end point
-    edgeline1_3 = np.array([])
-    edgeline2_3 = np.array([])
+    # Calculate end point #####################################################################
+
     
     medge_3 = (edgeline2_3[2] - edgeline1_3[2]) / (edgeline2_3[1] - edgeline1_3[1])
     cedge_3 = edgeline1_3[2] - medge_3 * edgeline1_3[1]
@@ -395,24 +487,97 @@ for i in listofentrypoints3rd:
     exitpoint_3 = (i[0], yedge_3, zedge_3)
     
     # Save start point and end point
-    fullpointslist.append([i, exitpoint_3])
-
+    fullpointslist_3.append([i, exitpoint_3])
 
 
 # =============================================================================
 # Checking Section
+# - no hitting each other
 # - no intersections at fracture line
 # - no intersections with nerves, arteries etc
+# - 3rd k wire cannot have same entry point as 2nd
 # =============================================================================
-valueswork = False
 
+
+if fullpointslist_1 < fullpointslist_2:
+    shortestlist = fullpointslist_1
     
+else:
+    shortestlist = fullpointslist_2
+ 
+
+for i in range(len(shortestlist)):
+    # Checking if the lines hit each other
+    intersecta = checkIntersect(fullpointslist_1[i], fullpointslist_2[i])
+    intersectb = checkIntersect(fullpointslist_1[i], fullpointslist_3[i])
+    intersectc = checkIntersect(fullpointslist_2[i], fullpointslist_3[i])
+    
+    if intersecta == False or intersectb == False or intersectc == False:
+        continue
+    
+    # At this point, the lines do not hit each other
+    
+    # Calculate intersection with the fracture plane
+    fracturecross1 = crossingPoint(fracture_plane, fullpointslist_1[i][0], fullpointslist_1[i][1])
+    fracturecross2 = crossingPoint(fracture_plane, fullpointslist_2[i][0], fullpointslist_2[i][1])
+    fracturecross3 = crossingPoint(fracture_plane, fullpointslist_3[i][0], fullpointslist_3[i][1])
+    
+    # Need to check that the lines dont all cross over at fracture plane - check equation between lines and compare ie. if m12 = m23: they cross so reject
+    A = [fracturecross1[0], fracturecross1[1], fracturecross1[2]]
+    B = [fracturecross2[0], fracturecross2[1], fracturecross2[2]]
+    C = [fracturecross3[0], fracturecross3[1], fracturecross3[2]]
+    
+    n1 = (A[0] - B[0]) / (B[0] - C[0])
+    n2 = (A[1] - B[1]) / (B[1] - C[1])
+    n3 = (A[2] - B[2]) / (B[2] - C[2])
+    
+    if n1 == n2 == n3:
+        continue
+    
+    # At this point, lines are not all crossing at fracture plane
+    finalPoints = [fullpointslist_1[i], fullpointslist_2[i], fullpointslist_3[i]]
+    break
 
 
 # =============================================================================
 # Preview image
 # - length of wire in bone
 # =============================================================================
+pointsandlength = []
 
+for i in finalPoints:
+    pointsandlength.append((i[0], i[1], lengthWire(i[0], i[1])))
 
 # Section to convert to something Solidworks can use - swap the Y and Z values around
+finalPointsandlength = [["K wire number", "Entry point", "Exit point", "Length"]]
+wirenumber = 1
+
+for i in pointsandlength:
+    Yfentry, Zfentry = swapYZ(i[0][1], i[0][2])
+    entryP = (i[0][0], Yfentry, Zfentry)
+    
+    Yfexit, Zfexit = swapYZ(i[1][1], i[1][2])
+    exitP = (i[1][0], Yfexit, Zfexit)
+    
+    finalPointsandlength.append([wirenumber, entryP, exitP, i[2]])
+    
+    wirenumber += 1
+
+    
+print("K wire 1 entry: {}".format(finalPointsandlength[0][0]))
+print("K wire 1 exit: {}".format(finalPointsandlength[0][1]))
+print("K wire 1 length: {}\n".format(finalPointsandlength[0][2]))
+
+print("K wire 2 entry: {}".format(finalPointsandlength[1][0]))
+print("K wire 2 exit: {}".format(finalPointsandlength[1][1]))
+print("K wire 2 length: {}\n".format(finalPointsandlength[1][2]))
+
+print("K wire 3 entry: {}".format(finalPointsandlength[2][0]))
+print("K wire 3 exit: {}".format(finalPointsandlength[2][1]))
+print("K wire 3 length: {}\n".format(finalPointsandlength[2][2]))
+
+header = ["K wire number", "Entry point", "Exit point", "Length"]
+
+with open('wireinfo.csv', 'w') as file:
+    writer = csv.writer(file)
+    writer.writerows(finalPointsandlength)
