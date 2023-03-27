@@ -12,6 +12,53 @@ import numpy as np
 import math
 import csv
 
+from tkinter import *
+
+root = Tk()
+root.title('Ergonomics Distal Radial Fracture') # Set title of window (can be changed)
+root.geometry("200x200") # Set size of window
+
+def show():
+    myLabel = clicked.get()
+    myLabel2 = clicked2.get()
+    root.quit()
+    
+options2 = [
+	"1.0",
+	"1.2",
+	"1.4",
+	"1.6",
+	"1.8",
+	"2.0",
+	"2.2"
+] # Set options of different diameters
+
+options = [
+	"2",
+	"3"
+] # Set options for number of K-Wires
+
+clicked = StringVar()
+clicked.set(options[0])
+
+clicked2 = StringVar()
+clicked2.set(options2[0])
+
+drop = OptionMenu(root, clicked, *options)
+drop.grid(row=1, column=0)
+
+drop2 = OptionMenu(root,clicked2, *options2)
+drop2.grid(row=3, column=0)
+
+optionsLabel = Label(root, text="How many wires do you wish to use?").grid(row=0, column=0)
+options2Label = Label(root, text="What diameter is the k-wire in mm").grid(row=2, column=0)
+myButton = Button(root, text="Confirm Selection", command=show).grid(row=4, column=0)
+root.mainloop()
+
+kWireDiameter = float(clicked2.get())
+numberWires = clicked.get()
+
+
 # This section will be changed to select options########################################
 # Setting up k-wire information
 # Left or right hand will potentially make a difference in some of the code: left = 0, right = 1 - change this to box selection
@@ -25,26 +72,26 @@ elif handInput.lower() == "right" or handInput.lower() == "r":
     print("Your arm is the right one")
 
 # User can input a k-wire thickness or type x which chooses the average value for them - change this to box selection
-kWireDiameterInput = input("Enter the diameter of your k-wire in mm. If none is decided, type x: ")
+#kWireDiameterInput = input("Enter the diameter of your k-wire in mm. If none is decided, type x: ")
 
-numberWires = int(input("How many wires are you using?"))       # Option of 2 or 3
+#numberWires = int(input("How many wires are you using?"))       # Option of 2 or 3
 
  
-try:
-     kWireDiameter = float(kWireDiameterInput) # Convert to float
+#try:
+#     kWireDiameter = float(kWireDiameterInput) # Convert to float
  
-     if kWireDiameter < 0.5:
-         print("This value is too small")
+    # if kWireDiameter < 0.5:
+     #    print("This value is too small")
  
-     elif kWireDiameter > 3:
-         print("This value is too big")
+     #elif kWireDiameter > 3:
+      #   print("This value is too big")
 
-except(ValueError):
-     if kWireDiameterInput.lower() == "x": # Code to choose value for user 
-         kWireDiameter = 1.6 # Research needed on what diameter is best/most commonly used
+#except(ValueError):
+ #    if kWireDiameterInput.lower() == "x": # Code to choose value for user 
+  #       kWireDiameter = 1.6 # Research needed on what diameter is best/most commonly used
  
-except:
-     print("This is not a valid number")
+#except:
+    # print("This is not a valid number")
  
 
 print("Your k-wire diameter is " + str(kWireDiameter) + "\n")
