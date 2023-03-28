@@ -592,6 +592,29 @@ if numberWires == 2 or workingvalue == False:
 #do pythagoras to find the distance between the ideal entry point and the actual entry point
 #subtract it from 5mm
 #considerations: need direction of difference, 
+#i need to change finapointsandlength to real variable name as it isnt defined yet. 
+'''
+def distance(p1, p2):
+    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+
+def direction_difference(p1, p2):
+    return (p2[0] - p1[0], p2[1] - p1[1])
+
+if len(finalPointsandlength) >= 4:
+    for i, entry in enumerate([entry1st, entry2nd, entry3rd], start=1):
+        actual_entry = finalPointsandlength[i][1]
+        distance_difference = distance(entry, actual_entry) - 5
+        direction = direction_difference(entry, actual_entry)
+        
+        print(f"Wire {i}:")
+        print(f"  Distance difference: {distance_difference} mm")
+        print(f"  Direction of difference: {direction}")
+else:
+    print("There are less than 3 wires.")
+
+'''
+
+
 
 # =============================================================================
 # Prepare results
