@@ -583,6 +583,17 @@ if numberWires == 2 or workingvalue == False:
         break
         
 # =============================================================================
+# Compression Calculation.
+# =============================================================================
+#entry1st,entry2nd,entry3rd are the ideal entry points for the wires
+#finalPointsandlength[1][1] 1st wire actual entry point
+#finalPointsandlength[2][1] 2nd wire actual entry point
+#finalPointsandlength[3][1] 3rd wire actual entry point do an if statement to check if 3 wires are used
+#do pythagoras to find the distance between the ideal entry point and the actual entry point
+#subtract it from 5mm
+#considerations: need direction of difference, 
+
+# =============================================================================
 # Prepare results
 # - length of wire in bone
 # =============================================================================
