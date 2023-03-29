@@ -79,15 +79,12 @@ with open(filename, 'r') as file:
 def show():
     myLabel = clicked.get()
     myLabel2 = clicked2.get()
+    myLabel3 = clicked3.get()
     root.quit()
     
-options2 = [
-	"0.7", "0.8", "0.9", "1.0", "1.1", "1.2", "1.25", "1.3"' "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2.2", "2.5", "2.8", "3.0"
-] # Set options of different diameters
-
-options = [
-	"2", "3"
-] # Set options for number of K-Wires
+options = ["2", "3"] # Set options for number of K-Wires
+options2 = ["0.7", "0.8", "0.9", "1.0", "1.1", "1.2", "1.25", "1.3"' "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2.2", "2.5", "2.8", "3.0"] # Set options of different diameters
+options3 = ["left", "right"] # Set options for side of Hand
 
 clicked = StringVar()
 clicked.set(options[0])
@@ -95,25 +92,30 @@ clicked.set(options[0])
 clicked2 = StringVar()
 clicked2.set(options2[0])
 
+clicked3 = StringVar()
+clicked3.set(options3[0]) 
+
 drop = OptionMenu(root, clicked, *options)
 drop.grid(row=1, column=0)
 
 drop2 = OptionMenu(root,clicked2, *options2)
 drop2.grid(row=3, column=0)
-
+	    
+drop3 = OptionMenu(root,clicked3, *options3)
+drop3.grid(row=5, column=0)
+	    
 optionsLabel = Label(root, text="How many wires do you wish to use?").grid(row=0, column=0)
 options2Label = Label(root, text="What diameter is the k-wire in mm").grid(row=2, column=0)
+options3Label = Label(root, text="Is this the left or right Hand?").grid(row=4, column=0)
 myButton = Button(root, text="Confirm Selection", command=show).grid(row=4, column=0)
 root.mainloop()
 
-kWireDiameter = float(clicked2.get())
+
 numberWires = int(clicked.get())
+kWireDiameter = float(clicked2.get())
+handInput = clicked3.get()
 
-
-# This section will be changed to select options########################################
-# Setting up k-wire information
-# Left or right hand will potentially make a difference in some of the code: left = 0, right = 1 - change this to box selection
-handInput = input("Is this the left or right hand?")
+# Left or right hand will potentially make a difference in some of the code: left = 0, right = 1
 if handInput.lower() == "left" or handInput.lower() == "l":
     handSide = 0
     print("Your arm is the left one")
