@@ -13,10 +13,68 @@ import math
 import csv
 
 from tkinter import *
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
+
 
 root = Tk()
 root.title('Ergonomics Distal Radial Fracture') # Set title of window (can be changed)
 root.geometry("200x200") # Set size of window
+
+filename = askopenfilename()
+
+with open(filename, 'r') as file:
+    csvreader = csv.reader(file)
+    for index, row in enumerate (csvreader):
+
+        if index == 1:
+            E1_R = row[1] # R for K-wire 1
+        if index == 1:
+            E1_A = row[2] # A for K-wire 1
+        if index == 1:
+            E1_S = row[3] # S for K-wire 1
+        if index == 2:
+            E2_R = row[1] # R for K-wire 2
+        if index == 2:
+            E2_A = row[2] # A for K-wire 2
+        if index == 2:
+            E2_S = row[3] # S for K-wire 2
+        if index == 3:
+            E3_R = row[1] # R for K-wire 3
+        if index == 3:
+            E3_A = row[2] # A for K-wire 3
+        if index == 3:
+            E3_S = row[3] # S for K-wire 3
+        if index == 4:
+            L1_R = row[1] # R for long start
+        if index == 4:
+            L1_A = row[2] # A for long start
+        if index == 4:
+            L1_S = row[3] # S for long start
+        if index == 5:
+            L2_R = row[1] # R for long end
+        if index == 5:
+            L2_A = row[2] # A for long end
+        if index == 5:
+            L2_S = row[3] # S for long end
+        if index == 6:
+            F1_R = row[1] # R for point 1 fracture plane
+        if index == 6:
+            F1_A = row[2] # A for point 1 fracture plane
+        if index == 6:
+            F1_S = row[3] # S for point 1 fracture plane
+        if index == 7:
+            F2_R = row[1] # R for point 2 fracture plane
+        if index == 7:
+            F2_A = row[2] # A for point 2 fracture plane
+        if index == 7:
+            F2_S = row[3] # S for point 2 fracture plane
+        if index == 8:
+            F3_R = row[1] # R for point 3 fracture plane
+        if index == 8:
+            F3_A = row[2] # A for point 3 fracture plane
+        if index == 8:
+            F3_S = row[3] # S for point 3 fracture plane
 
 def show():
     myLabel = clicked.get()
@@ -28,8 +86,7 @@ options2 = [
 ] # Set options of different diameters
 
 options = [
-	"2",
-	"3"
+	"2", "3"
 ] # Set options for number of K-Wires
 
 clicked = StringVar()
@@ -64,36 +121,14 @@ if handInput.lower() == "left" or handInput.lower() == "l":
 elif handInput.lower() == "right" or handInput.lower() == "r":
     handSide = 1
     print("Your arm is the right one")
-
-# User can input a k-wire thickness or type x which chooses the average value for them - change this to box selection
-#kWireDiameterInput = input("Enter the diameter of your k-wire in mm. If none is decided, type x: ")
-
-#numberWires = int(input("How many wires are you using?"))       # Option of 2 or 3
-
- 
-#try:
-#     kWireDiameter = float(kWireDiameterInput) # Convert to float
- 
-    # if kWireDiameter < 0.5:
-     #    print("This value is too small")
- 
-     #elif kWireDiameter > 3:
-      #   print("This value is too big")
-
-#except(ValueError):
- #    if kWireDiameterInput.lower() == "x": # Code to choose value for user 
-  #       kWireDiameter = 1.6 # Research needed on what diameter is best/most commonly used
- 
-#except:
-    # print("This is not a valid number")
  
 
 print("Your k-wire diameter is " + str(kWireDiameter) + "\n")
 ###########################################################################################
 
 # Select two points for the long axis
-long1 = np.array([8.992057800292969,-16.23821670487081,-72.1747325919789])
-long2 = np.array([-5.3343095779418945,-14.061205863952637,-128.35064697265625])
+long1 = np.array([L1_R,L1_A,L1_S]).astype(float)
+long2 = np.array([L2_R,L2_A,L2_S]).astype(float)
 
 if long1[0] == long2[0]:
     long1[0] += 0.000000003
@@ -241,9 +276,9 @@ def swapYZ(currentY, currentZ):
 # Define the fracture plane
 # =============================================================================
 # User selects 3 points on the plane (points can't be colinear) - will change UI
-fracturecoord1 = np.array([12.68620777130127, -10.468462944030762, -93.68328094482422])              
-fracturecoord2 = np.array([-3.3719584941864015, -12.80720329284668, -94.02467346191406])
-fracturecoord3 = np.array([0.7457211017608643, -20.08527946472168, -92.66558074951172])
+fracturecoord1 = np.array([F1_R,F1_A,F1_S]).astype(float)              
+fracturecoord2 = np.array([F2_R,F2_A,F2_S]).astype(float)
+fracturecoord3 = np.array([F3_R,F3_A,F3_S]).astype(float)
 
 # Calculate normal vector of fracture plane
 vector1 = fracturecoord2 - fracturecoord1
@@ -269,7 +304,7 @@ fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z = d
 # First k-wire
 # =============================================================================
 # Coordinates of radial styloid
-entry1st = np.array([26.09934425354004,-10.309171676635742,-68.86896514892578])
+entry1st = np.array([E1_R,E1_A,E1_S]).astype(float)
 
 cuboid_points = []
 
@@ -340,7 +375,7 @@ for i in cuboid_points_sorted_1:
 # Second k-wire 
 # =============================================================================
 # Coordinates of the Lister's tubercle
-entry2nd = np.array([7.865108013153076,-2.9531362719789627,-79.99486541748047])
+entry2nd = np.array([E2_R,E2_A,E2_S]).astype(float)
 
 radius = 5          # 5 mm ulnar to Lister's tubercle - used as a radius
 circlecentre2nd = (entry2nd[0], entry2nd[2])
@@ -403,7 +438,7 @@ for i in entrypoints2ndsorted:
 # Third k-wire
 # =============================================================================
 # Coordinates of distal dorsal of radius
-entry3rd = np.array([10.155582427978516,-6.055384159088135,-70.19824981689453]);
+entry3rd = np.array([E3_R,E3_A,E3_S]).astype(float)
 
 
 cuboid_points_tocheck3 = []
