@@ -592,27 +592,49 @@ if numberWires == 2 or workingvalue == False:
 #do pythagoras to find the distance between the ideal entry point and the actual entry point
 #subtract it from 5mm
 #considerations: need direction of difference, 
-#i need to change finapointsandlength to real variable name as it isnt defined yet. 
-'''
+#i need to change pointsandlength to real variable name as it isnt defined yet. 
+
 def distance(p1, p2):
     return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
 
 def direction_difference(p1, p2):
-    return (p2[0] - p1[0], p2[1] - p1[1])
+    if p1[1] > p2[1]:
+        return "up"
+    elif p1[1] < p2[1]:
+        return "down"
+    else:
+        return "none"
 
-if len(finalPointsandlength) >= 4:
-    for i, entry in enumerate([entry1st, entry2nd, entry3rd], start=1):
-        actual_entry = finalPointsandlength[i][1]
-        distance_difference = distance(entry, actual_entry) - 5
-        direction = direction_difference(entry, actual_entry)
+compression_results = []
+
+if len(finalPoints) >= 2:
+    entry_points = [entry1st, entry2nd]
+
+    if len(finalPoints) >= 3:
+        entry_points.append(entry3rd)
+    #might need to adjust positioning a bit.
+
+    for entry in entry_points:
+        up_allowable_range = 5
+        down_allowable_range = 5
         
-        print(f"Wire {i}:")
-        print(f"  Distance difference: {distance_difference} mm")
-        print(f"  Direction of difference: {direction}")
-else:
-    print("There are less than 3 wires.")
+        for i, actual_entry in enumerate(finalPoints, start=1):
+            distance_difference = distance(entry, actual_entry[i][1]) - 5
+            direction = direction_difference(entry, actual_entry[i][1])
 
-'''
+            compression_results.append((distance_difference, direction))
+
+            if direction == "up":
+                up_allowable_range -= distance_difference
+            elif direction == "down":
+                down_allowable_range -= distance_difference
+        up_allowable_range = max(0, up_allowable_range)
+        down_allowable_range = max(0, down_allowable_range)
+
+        print(f"In regards to compression, we can go {up_allowable_range:.2f} mm up and {down_allowable_range:.2f} mm down.")
+
+else:
+    print("Error: Not enough wires selected.")
 
 
 
