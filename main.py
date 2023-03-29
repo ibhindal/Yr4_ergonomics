@@ -595,7 +595,7 @@ if numberWires == 2 or workingvalue == False:
 #i need to change pointsandlength to real variable name as it isnt defined yet. 
 
 def distance(p1, p2):
-    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2+ (p1[2] - p2[2])**2)
 
 def direction_difference(p1, p2):
     if p1[1] > p2[1]:
