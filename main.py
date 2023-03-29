@@ -50,7 +50,7 @@ myButton = Button(root, text="Confirm Selection", command=show).grid(row=4, colu
 root.mainloop()
 
 kWireDiameter = float(clicked2.get())
-numberWires = clicked.get()
+numberWires = int(clicked.get())
 
 
 # This section will be changed to select options########################################
