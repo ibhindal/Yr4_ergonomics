@@ -84,7 +84,7 @@ def show():
     root.quit()
     
 options = ["2", "3"] # Set options for number of K-Wires
-options2 = ["0.7", "0.8", "0.9", "1.0", "1.1", "1.2", "1.25", "1.3"' "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2.2", "2.5", "2.8", "3.0"] # Set options of different diameters
+options2 = ["0.7", "0.8", "0.9", "1.0", "1.1", "1.2", "1.25", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "2.0", "2.2", "2.5", "2.8", "3.0"] # Set options of different diameters
 options3 = ["left", "right"] # Set options for side of Hand
 
 clicked = StringVar()
@@ -108,7 +108,7 @@ drop3.grid(row=5, column=0)
 optionsLabel = Label(root, text="How many wires do you wish to use?").grid(row=0, column=0)
 options2Label = Label(root, text="What diameter is the k-wire in mm").grid(row=2, column=0)
 options3Label = Label(root, text="Is this the left or right Hand?").grid(row=4, column=0)
-myButton = Button(root, text="Confirm Selection", command=show).grid(row=4, column=0)
+myButton = Button(root, text="Confirm Selection", command=show).grid(row=6, column=0)
 root.mainloop()
 
 
