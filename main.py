@@ -28,55 +28,39 @@ with open(filename, 'r') as file:
     csvreader = csv.reader(file)
     for index, row in enumerate (csvreader):
 
-        if index == 1:
-            E1_R = row[1] # R for K-wire 1
-        if index == 1:
-            E1_A = row[2] # A for K-wire 1
-        if index == 1:
-            E1_S = row[3] # S for K-wire 1
-        if index == 2:
-            E2_R = row[1] # R for K-wire 2
-        if index == 2:
-            E2_A = row[2] # A for K-wire 2
-        if index == 2:
-            E2_S = row[3] # S for K-wire 2
-        if index == 3:
-            E3_R = row[1] # R for K-wire 3
-        if index == 3:
-            E3_A = row[2] # A for K-wire 3
-        if index == 3:
-            E3_S = row[3] # S for K-wire 3
-        if index == 4:
-            L1_R = row[1] # R for long start
-        if index == 4:
-            L1_A = row[2] # A for long start
-        if index == 4:
-            L1_S = row[3] # S for long start
-        if index == 5:
-            L2_R = row[1] # R for long end
-        if index == 5:
-            L2_A = row[2] # A for long end
-        if index == 5:
-            L2_S = row[3] # S for long end
-        if index == 6:
-            F1_R = row[1] # R for point 1 fracture plane
-        if index == 6:
-            F1_A = row[2] # A for point 1 fracture plane
-        if index == 6:
-            F1_S = row[3] # S for point 1 fracture plane
-        if index == 7:
-            F2_R = row[1] # R for point 2 fracture plane
-        if index == 7:
-            F2_A = row[2] # A for point 2 fracture plane
-        if index == 7:
-            F2_S = row[3] # S for point 2 fracture plane
-        if index == 8:
-            F3_R = row[1] # R for point 3 fracture plane
-        if index == 8:
-            F3_A = row[2] # A for point 3 fracture plane
-        if index == 8:
-            F3_S = row[3] # S for point 3 fracture plane
-
+        if index == 1: # for K-wire 1
+            E1_R = row[1]
+            E1_A = row[2]
+            E1_S = row[3]
+        if index == 2: # for K-wire 2
+            E2_R = row[1]
+            E2_A = row[2]
+            E2_S = row[3]
+        if index == 3: # for K-wire 3
+            E3_R = row[1]
+            E3_A = row[2]
+            E3_S = row[3]
+        if index == 4: # for start of long axis
+            L1_R = row[1]
+            L1_A = row[2]
+            L1_S = row[3]
+        if index == 5: # for end of long axis
+            L2_R = row[1]
+            L2_A = row[2]
+            L2_S = row[3]
+        if index == 6: # for point 1 on fracture plane
+            F1_R = row[1]
+            F1_A = row[2]
+            F1_S = row[3]
+        if index == 7: # for point 2 on fracture plane
+            F2_R = row[1]
+            F2_A = row[2]
+            F2_S = row[3]
+        if index == 8: # for point 3 on fracture plane
+            F3_R = row[1]
+            F3_A = row[2]
+            F3_S = row[3]
+	
 def show():
     myLabel = clicked.get()
     myLabel2 = clicked2.get()
