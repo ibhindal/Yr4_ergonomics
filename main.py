@@ -630,11 +630,14 @@ def direction_difference(p1, p2):
 up_dist_diff=[]
 down_dist_diff=[]
 
-if len(finalPoints) >= 2:
+if len(finalPoints) == 2:
     entry_points = [entry1st, entry2nd]
+elif len(finalPoints) == 3:
+    entry_points = [entry1st, entry2nd, entry3rd]
 else:
     print("Not enough entries")
-
+print(entry2nd)
+print(finalPoints[2][1])
 
 for entry in entry_points:
     up_allowable_range = 5
@@ -650,6 +653,7 @@ for entry in entry_points:
             down_dist_diff.append(distance_difference)
         else:
             pass
+
        
     
 if len(up_dist_diff) > 0:
