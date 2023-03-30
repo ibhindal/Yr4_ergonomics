@@ -300,7 +300,7 @@ cuboid_points = []
 
 # Define the length of the cuboid relative to the start point
 cuboid_length_min = entry1st[0] + 0
-cuboid_length_max = entry1st[0] + 6
+cuboid_length_max = entry1st[0] + 3
 
 # Define the width of the cuboid relative to the start point
 cuboid_width_max= entry1st[1] + 3
