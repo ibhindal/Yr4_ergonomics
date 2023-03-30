@@ -11,6 +11,7 @@
 import numpy as np
 import math
 import csv
+import os
 
 from tkinter import *
 from tkinter import Tk
@@ -726,6 +727,9 @@ elif numberWires == 3:
 # Save values as a csv file
 header = ["K wire number", "Entry point", "Exit point", "Length"]
 
+file_path = askdirectory()
+os.chdir(file_path)
+	    
 with open('wireinfo.csv', 'w') as file:
     writer = csv.writer(file)
     writer.writerows(finalPointsandlength)
