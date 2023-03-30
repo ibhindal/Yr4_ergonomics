@@ -643,36 +643,41 @@ def direction_difference(p1, p2):
     else:
         return "none"
 
-compression_results = []
+up_dist_diff=[]
+down_dist_diff=[]
 
 if len(finalPoints) >= 2:
     entry_points = [entry1st, entry2nd]
-
-    if len(finalPoints) >= 3:
-        entry_points.append(entry3rd)
-    #might need to adjust positioning a bit.
-
-    for entry in entry_points:
-        up_allowable_range = 5
-        down_allowable_range = 5
-        
-        for i, actual_entry in enumerate(finalPoints, start=1):
-            distance_difference = 5 - distance(entry, actual_entry[i][1])
-            direction = direction_difference(entry, actual_entry[i][1])
-
-            compression_results.append((distance_difference, direction))
-
-            if direction == "up":
-                up_allowable_range -= distance_difference
-            elif direction == "down":
-                down_allowable_range -= distance_difference
-        up_allowable_range = max(0, up_allowable_range)
-        down_allowable_range = max(0, down_allowable_range)
-
-        print(f"In regards to compression, we can go {up_allowable_range:.2f} mm up and {down_allowable_range:.2f} mm down.")
-
 else:
-    print("Error: Not enough wires selected.")
+    print("Not enough entries")
+
+
+for entry in entry_points:
+    up_allowable_range = 5
+    down_allowable_range = 5
+   
+    for i in range(int(len(entry_points))):
+        
+        distance_difference = distance(entry, finalPoints[i][1])
+        direction = direction_difference(entry, finalPoints[i][1])
+        if direction == "up":
+            up_dist_diff.append(distance_difference)
+        elif direction == "down":
+            down_dist_diff.append(distance_difference)
+        else:
+            pass
+       
+    
+if len(up_dist_diff) > 0:
+        up_allowable_range -= max(up_dist_diff)
+if len(down_dist_diff) > 0:
+        down_allowable_range -= max(down_dist_diff)
+
+up_allowable_range = max(0, up_allowable_range)
+down_allowable_range = max(0, down_allowable_range)
+
+print(f"In regards to compression, we can go {up_allowable_range:.2f} mm up and {down_allowable_range:.2f} mm down.")
+
 
 
 
