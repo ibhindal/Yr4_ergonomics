@@ -656,7 +656,7 @@ if len(finalPoints) >= 2:
         down_allowable_range = 5
         
         for i, actual_entry in enumerate(finalPoints, start=1):
-            distance_difference = distance(entry, actual_entry[i][1]) - 5
+            distance_difference = 5 - distance(entry, actual_entry[i][1])
             direction = direction_difference(entry, actual_entry[i][1])
 
             compression_results.append((distance_difference, direction))
