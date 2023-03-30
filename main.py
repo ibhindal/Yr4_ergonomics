@@ -15,7 +15,7 @@ import os
 
 from tkinter import *
 from tkinter import Tk
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename, askdirectory
 
 
 root = Tk()
