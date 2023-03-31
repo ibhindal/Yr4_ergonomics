@@ -292,7 +292,7 @@ fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z = d
 # =============================================================================
 # Coordinates of radial styloid
 entry1st = np.array([E1_R,E1_A,E1_S]).astype(float)
-
+entry1=entry1st
 cuboid_points = []
 
 #The specified +/- ranges were taken from a cuboid ROI in Slicer
@@ -363,7 +363,7 @@ for i in cuboid_points_sorted_1:
 # =============================================================================
 # Coordinates of the Lister's tubercle
 entry2nd = np.array([E2_R,E2_A,E2_S]).astype(float)
-
+entry2=entry2nd
 radius = 5          # 5 mm ulnar to Lister's tubercle - used as a radius
 circlecentre2nd = (entry2nd[0], entry2nd[2])
 
@@ -426,7 +426,7 @@ for i in entrypoints2ndsorted:
 # =============================================================================
 # Coordinates of distal dorsal of radius
 entry3rd = np.array([E3_R,E3_A,E3_S]).astype(float)
-
+entry3=entry3rd
 
 cuboid_points_tocheck3 = []
 
@@ -631,36 +631,39 @@ up_dist_diff=[]
 down_dist_diff=[]
 
 if len(finalPoints) == 2:
-    entry_points = [entry1st, entry2nd]
+    entry_points = [entry1, entry2]
 elif len(finalPoints) == 3:
-    entry_points = [entry1st, entry2nd, entry3rd]
+    entry_points = [entry1, entry2, entry3]
 else:
     print("Not enough entries")
-print(entry2nd)
-print(finalPoints[2][1])
 
-for entry in entry_points:
-    up_allowable_range = 5
+
+
+
+for idx, entry in enumerate(entry_points):
+    up_allowable_range = 4
     down_allowable_range = 5
-   
-    for i in range(int(len(entry_points))):
-        
-        distance_difference = distance(entry, finalPoints[i][1])
-        direction = direction_difference(entry, finalPoints[i][1])
-        if direction == "up":
-            up_dist_diff.append(distance_difference)
-        elif direction == "down":
-            down_dist_diff.append(distance_difference)
-        else:
-            pass
+
+    # Compare the entry point only to the corresponding final point
+    distance_difference = distance(entry, finalPoints[idx][0])
+
+    direction = direction_difference(entry, finalPoints[idx][0])
+    if direction == "up":
+        up_dist_diff.append(distance_difference)
+    elif direction == "down":
+        down_dist_diff.append(distance_difference)
+    else:
+        pass
+
 
        
     
 if len(up_dist_diff) > 0:
         up_allowable_range -= max(up_dist_diff)
+        print (max(up_dist_diff))
 if len(down_dist_diff) > 0:
         down_allowable_range -= max(down_dist_diff)
-
+        print(max(down_dist_diff))
 up_allowable_range = max(0, up_allowable_range)
 down_allowable_range = max(0, down_allowable_range)
 
