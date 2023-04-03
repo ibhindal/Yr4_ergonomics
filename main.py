@@ -729,3 +729,4 @@ os.chdir(file_path)
 with open('wireinfo.csv', 'w') as file:
     writer = csv.writer(file)
     writer.writerows(finalPointsandlength)
+    writer.writerow([f"In regards to compression, we can go {up_allowable_range:.2f} mm up and {down_allowable_range:.2f} mm down."])
