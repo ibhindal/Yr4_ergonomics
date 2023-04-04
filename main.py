@@ -16,6 +16,7 @@ import os
 from tkinter import *
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename, askdirectory
+from tkinter import simpledialog
 
 
 root = Tk()
@@ -725,8 +726,9 @@ header = ["K wire number", "Entry point", "Exit point", "Length"]
 
 file_path = askdirectory()
 os.chdir(file_path)
-	    
-with open('wireinfo.csv', 'w') as file:
+fileName = simpledialog.askstring(title = "Save As", prompt = "Enter file name")
+fileNameCSV = fileName + ".csv"	    
+with open(fileNameCSV, 'w') as file:
     writer = csv.writer(file)
     writer.writerows(finalPointsandlength)
     writer.writerow([f"In regards to compression, we can go {up_allowable_range:.2f} mm up and {down_allowable_range:.2f} mm down."])
