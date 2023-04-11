@@ -61,6 +61,30 @@ with open(filename, 'r') as file:
             F3_R = row[1]
             F3_A = row[2]
             F3_S = row[3]
+	if index == 9: # for start of edgeline 1
+	    EL1_1_R = row[1]
+	    EL1_1_A = row[2]
+	    EL1_1_S = row[3]
+	if index == 10: # for end of edgeline 1
+	    EL2_1_R = row[1]
+	    EL2_1_A = row[2]
+	    EL2_1_S = row[3]
+	if index == 11: # for start of edgeline 2
+	    EL1_2_R = row[1]
+	    EL1_2_A = row[2]
+	    EL1_2_S = row[3]
+	if index == 12: # for end of edgeline 2
+	    EL2_2_R = row[1]
+	    EL2_2_A = row[2]
+	    EL2_2_S = row[3]
+	if index == 11: # for start of edgeline 3
+	    EL1_3_R = row[1]
+	    EL1_3_A = row[2]
+	    EL1_3_S = row[3]
+	if index == 12: # for end of edgeline 3
+	    EL2_3_R = row[1]
+	    EL2_3_A = row[2]
+	    EL2_3_S = row[3]
 	
 def show():
     myLabel = clicked.get()
@@ -323,8 +347,8 @@ cuboid_points_sorted_1 = sortList(entry1st, cuboid_points)
 
 # Exit point calculation
 fullpointslist_1 = []
-edgeline1_1 = np.array([1.2287021896347312,-10.309171676635742,-76.41708727152934])
-edgeline2_1 = np.array([-0.8351931987676409,-10.309171676635742,-100.88898973401454])
+edgeline1_1 = np.array([EL1_1_R,EL1_1_A,EL1_1_S]).astype(float)
+edgeline2_1 = np.array([EL2_1_R,EL2_1_A,EL2_1_S]).astype(float)
 
 for i in cuboid_points_sorted_1:
     # Find equation of line that is n degrees to the long axis
@@ -389,9 +413,8 @@ for X in listofxentry2nd:
 
 entrypoints2ndsorted = sortList(entry2nd, listofentrypoints2nd)
 fullpointslist_2 = []
-edgeline1_2 = np.array([7.865108013153076,-21.51528869801447,-78.40716837606037])
-edgeline2_2 = np.array([7.865108013153076,-15.372742899197895,-102.29484648256924])
-
+edgeline1_2 = np.array([EL1_2_R,EL1_2_A,EL1_2_S]).astype(float)
+edgeline2_2 = np.array([EL2_2_R,EL2_2_A,EL2_2_S]).astype(float)
 for i in entrypoints2ndsorted:
     # Find equation of line that is n degrees to the long axis
     mLA_2 = (long1[2] - long2[2]) / (long1[1] - long2[1])
@@ -467,8 +490,8 @@ cuboid_points_sorted_3 = sortList(entry3rd, cuboid_points3)
 
 
 fullpointslist_3 = []
-edgeline1_3 = np.array([10.155582427978516,-24.90958723601122,-75.31703798257502])
-edgeline2_3 = np.array([10.155582427978516,-17.14609185139583,-89.30839230210165])
+edgeline1_3 = np.array([EL1_3_R,EL1_3_A,EL1_3_S]).astype(float)
+edgeline2_3 = np.array([EL2_3_R,EL2_3_A,EL2_3_S]).astype(float)
 
 for i in cuboid_points_sorted_3:
     # Calculate equation of the long axis
