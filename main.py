@@ -61,30 +61,30 @@ with open(filename, 'r') as file:
             F3_R = row[1]
             F3_A = row[2]
             F3_S = row[3]
-	if index == 9: # for start of edgeline 1
-	    EL1_1_R = row[1]
-	    EL1_1_A = row[2]
-	    EL1_1_S = row[3]
-	if index == 10: # for end of edgeline 1
-	    EL2_1_R = row[1]
-	    EL2_1_A = row[2]
-	    EL2_1_S = row[3]
-	if index == 11: # for start of edgeline 2
-	    EL1_2_R = row[1]
-	    EL1_2_A = row[2]
-	    EL1_2_S = row[3]
-	if index == 12: # for end of edgeline 2
-	    EL2_2_R = row[1]
-	    EL2_2_A = row[2]
-	    EL2_2_S = row[3]
-	if index == 11: # for start of edgeline 3
-	    EL1_3_R = row[1]
-	    EL1_3_A = row[2]
-	    EL1_3_S = row[3]
-	if index == 12: # for end of edgeline 3
-	    EL2_3_R = row[1]
-	    EL2_3_A = row[2]
-	    EL2_3_S = row[3]
+   	if index == 9: # for start of edgeline 1
+   	    EL1_1_R = row[1]
+   	    EL1_1_A = row[2]
+   	    EL1_1_S = row[3]
+   	if index == 10: # for end of edgeline 1
+   	    EL2_1_R = row[1]
+   	    EL2_1_A = row[2]
+   	    EL2_1_S = row[3]
+   	if index == 11: # for start of edgeline 2
+   	    EL1_2_R = row[1]
+   	    EL1_2_A = row[2]
+   	    EL1_2_S = row[3]
+   	if index == 12: # for end of edgeline 2
+   	    EL2_2_R = row[1]
+   	    EL2_2_A = row[2]
+   	    EL2_2_S = row[3]
+   	if index == 11: # for start of edgeline 3
+   	    EL1_3_R = row[1]
+   	    EL1_3_A = row[2]
+   	    EL1_3_S = row[3]
+   	if index == 12: # for end of edgeline 3
+   	    EL2_3_R = row[1]
+   	    EL2_3_A = row[2]
+   	    EL2_3_S = row[3]
 	
 def show():
     myLabel = clicked.get()
@@ -134,9 +134,13 @@ elif handInput.lower() == "right" or handInput.lower() == "r":
     handSide = 1
     print("Your arm is the right one")
  
+angle = math.radians(45) # Angle of long axis to wire
+    
+if handSide == 0:
+    tanangle = round(math.tan(angle))
 
-print("Your k-wire diameter is " + str(kWireDiameter) + "\n")
-###########################################################################################
+elif handSide == 1:
+    tanangle = - round(math.tan(angle))
 
 # Select two points for the long axis
 long1 = np.array([L1_R,L1_A,L1_S]).astype(float)
@@ -151,8 +155,7 @@ elif long1[1] == long2[1]:
 elif long1[2] == long2[2]:
     long1[2] += 0.000000003
 
-angle = math.radians(45) # Angle of long axis to wire
-tanangle = round(math.tan(angle))
+
     
 # =============================================================================
 # Functions - may be needed multiple times so include here
@@ -356,7 +359,7 @@ for i in cuboid_points_sorted_1:
     cLA_1 = long1[2] - (mLA_1 * long1[0])
     
     # Using tan a = (m1 - m2)/(1 + m1m2) to get gradient of k wire
-    m_1 = (mLA_1 - 1) / (mLA_1 + 1)
+    m_1 = (mLA_1 - tanangle) / (mLA_1 * tanangle + 1)
     c_1 = i[2] - (m_1 * i[0])
     
     # Calculate equation of the edge of the bone
@@ -421,7 +424,7 @@ for i in entrypoints2ndsorted:
     cLA_2 = long1[2] - (mLA_2 * long1[1])
 
     # Using tan a = (m1 - m2)/(1 + m1m2) to get gradient of k wire    
-    m_2 = (mLA_2 - 1) / (mLA_2 + 1)
+    m_2 = (mLA_2 - tanangle) / (mLA_2 * tanangle + 1)
     c_2 = i[2] - (m_2 * i[1])
     
     # Calculate equation of the edge of the bone
@@ -499,7 +502,7 @@ for i in cuboid_points_sorted_3:
     cLA_3 = long1[2] - (mLA_2 * long1[1])
     
     # Calculate equation of the wire
-    m_3 = (mLA_3 - 1) / (mLA_3 + 1)
+    m_3 = (mLA_3 - tanangle) / (mLA_3 * tanangle + 1)
     c_3 = i[2] - (m_3 * i[1])
     
     # Calculate the equation of the edge
