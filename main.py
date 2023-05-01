@@ -61,30 +61,30 @@ with open(filename, 'r') as file:
             F3_R = row[1]
             F3_A = row[2]
             F3_S = row[3]
-   	if index == 9: # for start of edgeline 1
-   	    EL1_1_R = row[1]
-   	    EL1_1_A = row[2]
-   	    EL1_1_S = row[3]
-   	if index == 10: # for end of edgeline 1
-   	    EL2_1_R = row[1]
-   	    EL2_1_A = row[2]
-   	    EL2_1_S = row[3]
-   	if index == 11: # for start of edgeline 2
-   	    EL1_2_R = row[1]
-   	    EL1_2_A = row[2]
-   	    EL1_2_S = row[3]
-   	if index == 12: # for end of edgeline 2
-   	    EL2_2_R = row[1]
-   	    EL2_2_A = row[2]
-   	    EL2_2_S = row[3]
-   	if index == 11: # for start of edgeline 3
-   	    EL1_3_R = row[1]
-   	    EL1_3_A = row[2]
-   	    EL1_3_S = row[3]
-   	if index == 12: # for end of edgeline 3
-   	    EL2_3_R = row[1]
-   	    EL2_3_A = row[2]
-   	    EL2_3_S = row[3]
+       	if index == 9: # for start of edgeline 1
+       	    EL1_1_R = row[1]
+       	    EL1_1_A = row[2]
+       	    EL1_1_S = row[3]
+       	if index == 10: # for end of edgeline 1
+       	    EL2_1_R = row[1]
+       	    EL2_1_A = row[2]
+       	    EL2_1_S = row[3]
+       	if index == 11: # for start of edgeline 2
+       	    EL1_2_R = row[1]
+       	    EL1_2_A = row[2]
+       	    EL1_2_S = row[3]
+       	if index == 12: # for end of edgeline 2
+       	    EL2_2_R = row[1]
+       	    EL2_2_A = row[2]
+       	    EL2_2_S = row[3]
+       	if index == 11: # for start of edgeline 3
+       	    EL1_3_R = row[1]
+       	    EL1_3_A = row[2]
+       	    EL1_3_S = row[3]
+       	if index == 12: # for end of edgeline 3
+       	    EL2_3_R = row[1]
+       	    EL2_3_A = row[2]
+       	    EL2_3_S = row[3]
 	
 def show():
     myLabel = clicked.get()
@@ -143,8 +143,12 @@ elif handSide == 1:
     tanangle = - round(math.tan(angle))
 
 # Select two points for the long axis
-long1 = np.array([L1_R,L1_A,L1_S]).astype(float)
-long2 = np.array([L2_R,L2_A,L2_S]).astype(float)
+long1a = np.array([L1_R,L1_A,L1_S]).astype(float)
+long2a = np.array([L2_R,L2_A,L2_S]).astype(float)
+
+long1 = np.array([-long1a[0], -long1a[1], long1a[2]])
+long2 = np.array([-long2a[0], -long2a[1], long2a[2]])
+
 
 if long1[0] == long2[0]:
     long1[0] += 0.000000003
@@ -291,9 +295,13 @@ def swapYZ(currentY, currentZ):
 # Define the fracture plane
 # =============================================================================
 # User selects 3 points on the plane (points can't be colinear) - will change UI
-fracturecoord1 = np.array([F1_R,F1_A,F1_S]).astype(float)              
-fracturecoord2 = np.array([F2_R,F2_A,F2_S]).astype(float)
-fracturecoord3 = np.array([F3_R,F3_A,F3_S]).astype(float)
+fracturecoord1a = np.array([F1_R,F1_A,F1_S]).astype(float)              
+fracturecoord2a = np.array([F2_R,F2_A,F2_S]).astype(float)
+fracturecoord3a = np.array([F3_R,F3_A,F3_S]).astype(float)
+
+fracturecoord1 = np.array([-fracturecoord1a[0], -fracturecoord1a[1], fracturecoord1a[2]])
+fracturecoord2 = np.array([-fracturecoord2a[0], -fracturecoord2a[1], fracturecoord2a[2]])
+fracturecoord3 = np.array([-fracturecoord3a[0], -fracturecoord3a[1], fracturecoord3a[2]])
 
 # Calculate normal vector of fracture plane
 vector1 = fracturecoord2 - fracturecoord1
@@ -319,8 +327,10 @@ fracture_plane = [a, b, c, d]  # plane equation: a*x + b*y + c*z = d
 # First k-wire
 # =============================================================================
 # Coordinates of radial styloid
-entry1st = np.array([E1_R,E1_A,E1_S]).astype(float)
-entry1=entry1st
+entry1sta = np.array([E1_R,E1_A,E1_S]).astype(float)
+entry1st = np.array([-entry1sta[0], -entry1sta[1], entry1sta[2]])
+
+entry1 = entry1st
 cuboid_points = []
 
 #The specified +/- ranges were taken from a cuboid ROI in Slicer
@@ -350,8 +360,11 @@ cuboid_points_sorted_1 = sortList(entry1st, cuboid_points)
 
 # Exit point calculation
 fullpointslist_1 = []
-edgeline1_1 = np.array([EL1_1_R,EL1_1_A,EL1_1_S]).astype(float)
-edgeline2_1 = np.array([EL2_1_R,EL2_1_A,EL2_1_S]).astype(float)
+edgeline1_1a = np.array([EL1_1_R,EL1_1_A,EL1_1_S]).astype(float)
+edgeline2_1a = np.array([EL2_1_R,EL2_1_A,EL2_1_S]).astype(float)
+
+edgeline1_1 = np.array([-edgeline1_1a[0], -edgeline1_1a[1], edgeline1_1a[2]])
+edgeline2_1 = np.array([-edgeline2_1a[0], -edgeline2_1a[1], edgeline2_1a[2]])
 
 for i in cuboid_points_sorted_1:
     # Find equation of line that is n degrees to the long axis
@@ -390,8 +403,10 @@ for i in cuboid_points_sorted_1:
 # Second k-wire 
 # =============================================================================
 # Coordinates of the Lister's tubercle
-entry2nd = np.array([E2_R,E2_A,E2_S]).astype(float)
+entry2nda = np.array([E2_R,E2_A,E2_S]).astype(float)
+entry2nd = np.array([-entry2nda[0], -entry2nda[1], entry2nda[2]])
 entry2=entry2nd
+
 radius = 5          # 5 mm ulnar to Lister's tubercle - used as a radius
 circlecentre2nd = (entry2nd[0], entry2nd[2])
 
@@ -416,8 +431,11 @@ for X in listofxentry2nd:
 
 entrypoints2ndsorted = sortList(entry2nd, listofentrypoints2nd)
 fullpointslist_2 = []
-edgeline1_2 = np.array([EL1_2_R,EL1_2_A,EL1_2_S]).astype(float)
-edgeline2_2 = np.array([EL2_2_R,EL2_2_A,EL2_2_S]).astype(float)
+edgeline1_2a = np.array([EL1_2_R,EL1_2_A,EL1_2_S]).astype(float)
+edgeline2_2a = np.array([EL2_2_R,EL2_2_A,EL2_2_S]).astype(float)
+edgeline1_2 = np.array([-edgeline1_2a[0], -edgeline1_2a[1], edgeline1_2a[2]])
+edgeline2_2 = np.array([-edgeline2_2a[0], -edgeline2_2a[1], edgeline2_2a[2]])
+
 for i in entrypoints2ndsorted:
     # Find equation of line that is n degrees to the long axis
     mLA_2 = (long1[2] - long2[2]) / (long1[1] - long2[1])
@@ -452,7 +470,8 @@ for i in entrypoints2ndsorted:
 # Third k-wire
 # =============================================================================
 # Coordinates of distal dorsal of radius
-entry3rd = np.array([E3_R,E3_A,E3_S]).astype(float)
+entry3rda = np.array([E3_R,E3_A,E3_S]).astype(float)
+entry3rd = np.array([-entry3rda[0], -entry3rda[1], entry3rda[2]])
 entry3=entry3rd
 
 cuboid_points_tocheck3 = []
@@ -493,8 +512,11 @@ cuboid_points_sorted_3 = sortList(entry3rd, cuboid_points3)
 
 
 fullpointslist_3 = []
-edgeline1_3 = np.array([EL1_3_R,EL1_3_A,EL1_3_S]).astype(float)
-edgeline2_3 = np.array([EL2_3_R,EL2_3_A,EL2_3_S]).astype(float)
+edgeline1_3a = np.array([EL1_3_R,EL1_3_A,EL1_3_S]).astype(float)
+edgeline2_3a = np.array([EL2_3_R,EL2_3_A,EL2_3_S]).astype(float)
+edgeline1_3 = np.array([-edgeline1_3a[0], -edgeline1_3a[1], edgeline1_3a[2]])
+edgeline2_3 = np.array([-edgeline2_3a[0], -edgeline2_3a[1], edgeline2_3a[2]])
+
 
 for i in cuboid_points_sorted_3:
     # Calculate equation of the long axis
